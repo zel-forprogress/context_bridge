@@ -1,0 +1,59 @@
+# Context Bridge 配置文件
+# 复制为 config.toml 并填入你的配置
+
+# 监控的 agent 列表
+[agents.claude]
+enabled = true
+type = "claude"
+# 对话文件目录，支持 ~ 展开
+paths = ["~/.claude/projects/"]
+
+[agents.cursor]
+enabled = false
+type = "cursor"
+paths = ["~/.cursor/workspaceStorage/"]
+
+[agents.cline]
+enabled = false
+type = "cline"
+paths = ["~/.cline/conversations/"]
+
+# 摘要提供者配置（按优先级排序）
+[[summarizer.providers]]
+name = "deepseek"
+enabled = true
+api_key = ""  # 填入你的 API Key
+base_url = "https://api.deepseek.com"
+model = "deepseek-chat"
+priority = 1
+
+[[summarizer.providers]]
+name = "openai"
+enabled = false
+api_key = ""
+base_url = "https://api.openai.com/v1"
+model = "gpt-4o-mini"
+priority = 2
+
+[[summarizer.providers]]
+name = "gemini"
+enabled = false
+api_key = ""
+base_url = "https://generativelanguage.googleapis.com/v1beta"
+model = "gemini-2.0-flash"
+priority = 3
+
+# 本地模型兜底（Ollama）
+[summarizer.local]
+enabled = true
+base_url = "http://localhost:11434"
+model = "qwen2.5:7b"
+
+# 监控行为
+[monitor]
+# 检查间隔（秒）
+interval = 5
+# 上下文使用率阈值，超过此值触发摘要（0.0 - 1.0）
+context_threshold = 0.85
+# 对话空闲多久后自动保存摘要（秒）
+idle_timeout = 600
