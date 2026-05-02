@@ -1,7 +1,9 @@
+import { useTranslation } from 'react-i18next'
 import type { MessageOut } from '../types'
 
 export default function MessageBubble({ message }: { message: MessageOut }) {
   const isUser = message.role === 'user'
+  const { t } = useTranslation()
 
   return (
     <div className={`flex ${isUser ? 'justify-end' : 'justify-start'} mb-3`}>
@@ -14,11 +16,11 @@ export default function MessageBubble({ message }: { message: MessageOut }) {
       >
         <div className="flex items-center gap-2 mb-1">
           <span className={`text-xs font-medium ${isUser ? 'text-blue-200' : 'text-gray-400'}`}>
-            {isUser ? 'User' : 'Assistant'}
+            {isUser ? t('message.user') : t('message.assistant')}
           </span>
           {message.token_count > 0 && (
             <span className={`text-xs ${isUser ? 'text-blue-200' : 'text-gray-400'}`}>
-              ~{message.token_count} tokens
+              {t('message.tokens', { count: message.token_count })}
             </span>
           )}
         </div>

@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
+import i18n from '../i18n'
 
 export function useApi<T>(fetcher: () => Promise<T>, deps: unknown[] = []) {
   const [data, setData] = useState<T | null>(null)
@@ -12,7 +13,7 @@ export function useApi<T>(fetcher: () => Promise<T>, deps: unknown[] = []) {
       const result = await fetcher()
       setData(result)
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Unknown error')
+      setError(e instanceof Error ? e.message : i18n.t('error.unknown'))
     } finally {
       setLoading(false)
     }

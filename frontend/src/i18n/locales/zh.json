@@ -1,0 +1,84 @@
+{
+  "nav": {
+    "agents": "Agent 管理",
+    "summaries": "摘要列表"
+  },
+  "app": {
+    "title": "Context Bridge",
+    "subtitle": "AI Agent 上下文管理工具"
+  },
+  "agent": {
+    "installed": "已安装",
+    "notDetected": "未检测到",
+    "conversations": "{{count}} 个对话",
+    "notFound": "未找到 {{name}} 安装目录"
+  },
+  "message": {
+    "user": "用户",
+    "assistant": "助手",
+    "tokens": "~{{count}} tokens"
+  },
+  "summary": {
+    "title": "摘要",
+    "copyPrompt": "复制恢复提示",
+    "copying": "复制中...",
+    "keyDecisions": "关键决策",
+    "pendingTasks": "待办任务",
+    "filesModified": "已修改文件",
+    "created": "创建时间："
+  },
+  "monitor": {
+    "title": "上下文监控",
+    "start": "启动",
+    "stop": "停止",
+    "monitoring": "监控中",
+    "stopped": "已停止",
+    "agents": "Agent：",
+    "none": "无",
+    "threshold": "阈值：",
+    "autoSummary": "自动摘要：",
+    "on": "开启",
+    "off": "关闭",
+    "summaries": "摘要数：",
+    "last": "最近："
+  },
+  "home": {
+    "detectedAgents": "已检测的 Agent",
+    "detectedDesc": "自动检测本机安装的 AI Agent，点击可浏览对话记录。"
+  },
+  "conversations": {
+    "title": "{{name}} 对话列表",
+    "found": "找到 {{count}} 个对话",
+    "loading": "加载中...",
+    "noConversations": "暂无对话记录",
+    "messages": "{{count}} 条消息",
+    "tokens": "tokens",
+    "nearLimit": "即将用尽！",
+    "home": "首页"
+  },
+  "detail": {
+    "conversation": "对话详情",
+    "messages": "{{count}} 条消息",
+    "tokens": "tokens",
+    "used": "% 已使用",
+    "generating": "生成中...",
+    "generateSummary": "生成摘要",
+    "summaryFailed": "摘要生成失败",
+    "home": "首页"
+  },
+  "saved": {
+    "title": "已保存的摘要",
+    "desc": "之前生成的对话摘要。复制恢复提示可在新会话中恢复上下文。",
+    "empty": "暂无已保存的摘要"
+  },
+  "time": {
+    "justNow": "刚刚",
+    "minutesAgo": "{{count}} 分钟前",
+    "hoursAgo": "{{count}} 小时前",
+    "daysAgo": "{{count}} 天前"
+  },
+  "error": {
+    "unknown": "未知错误",
+    "requestFailed": "请求失败"
+  }
+}

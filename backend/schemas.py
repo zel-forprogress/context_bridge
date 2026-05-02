@@ -59,5 +59,6 @@ class MonitorStatus(BaseModel):
     started_at: str | None
     watched_agents: list[str]
     context_threshold: float
+    auto_summarize: bool
     summary_count: int
     last_summary_time: str | None

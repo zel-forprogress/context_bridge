@@ -1,10 +1,12 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import type { SummaryOut } from '../types'
 import { api } from '../api/client'
 
 export default function SummaryPanel({ summary }: { summary: SummaryOut }) {
   const [prompt, setPrompt] = useState<string | null>(null)
   const [copying, setCopying] = useState(false)
+  const { t } = useTranslation()
 
   const handleCopyPrompt = async () => {
     setCopying(true)
@@ -24,13 +26,13 @@ export default function SummaryPanel({ summary }: { summary: SummaryOut }) {
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-5">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-base font-semibold text-gray-900">Summary</h3>
+        <h3 className="text-base font-semibold text-gray-900">{t('summary.title')}</h3>
         <button
           onClick={handleCopyPrompt}
           disabled={copying}
           className="text-xs px-3 py-1.5 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 transition-colors disabled:opacity-50"
         >
-          {copying ? 'Copying...' : 'Copy Resume Prompt'}
+          {copying ? t('summary.copying') : t('summary.copyPrompt')}
         </button>
       </div>
 
@@ -39,7 +41,7 @@ export default function SummaryPanel({ summary }: { summary: SummaryOut }) {
       {summary.key_decisions.length > 0 && (
         <div className="mb-3">
           <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1.5">
-            Key Decisions
+            {t('summary.keyDecisions')}
           </h4>
           <ul className="list-disc list-inside text-sm text-gray-600 space-y-0.5">
             {summary.key_decisions.map((d, i) => (
@@ -52,11 +54,11 @@ export default function SummaryPanel({ summary }: { summary: SummaryOut }) {
       {summary.pending_tasks.length > 0 && (
         <div className="mb-3">
           <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1.5">
-            Pending Tasks
+            {t('summary.pendingTasks')}
           </h4>
           <ul className="list-disc list-inside text-sm text-gray-600 space-y-0.5">
-            {summary.pending_tasks.map((t, i) => (
-              <li key={i}>{t}</li>
+            {summary.pending_tasks.map((task, i) => (
+              <li key={i}>{task}</li>
             ))}
           </ul>
         </div>
@@ -65,7 +67,7 @@ export default function SummaryPanel({ summary }: { summary: SummaryOut }) {
       {summary.files_modified.length > 0 && (
         <div className="mb-3">
           <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1.5">
-            Files Modified
+            {t('summary.filesModified')}
           </h4>
           <ul className="list-disc list-inside text-sm text-gray-600 space-y-0.5 font-mono">
             {summary.files_modified.map((f, i) => (
@@ -76,7 +78,7 @@ export default function SummaryPanel({ summary }: { summary: SummaryOut }) {
       )}
 
       <div className="text-xs text-gray-400 mt-3">
-        Created: {new Date(summary.created_at).toLocaleString()}
+        {t('summary.created')} {new Date(summary.created_at).toLocaleString()}
       </div>
     </div>
   )

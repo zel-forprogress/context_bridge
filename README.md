@@ -97,11 +97,14 @@ context-bridge resume ~/.context-bridge/sessions/xxx.json
 | Cursor | 基础支持 | JSON 格式 |
 | Cline | 基础支持 | JSON 格式 |
 
-## 摘要提供者优先级
+## 摘要提供者
 
-1. DeepSeek（便宜，性价比高）
-2. OpenAI / Gemini（主流云端服务）
-3. 本地 Ollama（兜底，永远可用）
+配置多个 provider 时，按配置文件中的书写顺序依次尝试，全部失败后兜底到本地 Ollama。
+
+- DeepSeek（便宜，性价比高）
+- MiMo（免费，通过硅基流动调用）
+- OpenAI / Gemini（主流云端服务）
+- 本地 Ollama（兜底，永远可用）
 
 ## 项目结构
 

@@ -36,7 +36,10 @@ def _get_session_mgr():
 def _get_summarizer():
     global _summarizer, _config
     if _summarizer is None:
-        _config = load_config(None)
+        # 从项目根目录加载 config.toml
+        project_root = Path(__file__).resolve().parent.parent.parent
+        config_path = project_root / "config.toml"
+        _config = load_config(config_path)
         _summarizer = Summarizer(
             providers=_config.providers,
             local_config=_config.local,

@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import type { AgentInfo } from '../types'
 
 const agentIcons: Record<string, string> = {
@@ -9,6 +10,7 @@ const agentIcons: Record<string, string> = {
 
 export default function AgentCard({ agent }: { agent: AgentInfo }) {
   const navigate = useNavigate()
+  const { t } = useTranslation()
 
   return (
     <button
@@ -29,21 +31,21 @@ export default function AgentCard({ agent }: { agent: AgentInfo }) {
         </div>
         {agent.detected ? (
           <span className="text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-700">
-            已安装
+            {t('agent.installed')}
           </span>
         ) : (
           <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-500">
-            未检测到
+            {t('agent.notDetected')}
           </span>
         )}
       </div>
       {agent.detected && (
         <div className="text-sm text-gray-500">
-          {agent.conversation_count} 个对话
+          {t('agent.conversations', { count: agent.conversation_count })}
         </div>
       )}
       {!agent.detected && (
-        <div className="text-xs text-gray-400">未找到 {agent.name} 安装目录</div>
+        <div className="text-xs text-gray-400">{t('agent.notFound', { name: agent.name })}</div>
       )}
     </button>
   )

@@ -6,6 +6,7 @@ import type {
   ResumePromptOut,
   MonitorStatus,
 } from '../types'
+import i18n from '../i18n'
 
 let baseUrl = '/api'
 
@@ -25,7 +26,7 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
   const resp = await fetch(`${baseUrl}${path}`, options)
   if (!resp.ok) {
     const err = await resp.json().catch(() => ({ detail: resp.statusText }))
-    throw new Error(err.detail || 'Request failed')
+    throw new Error(err.detail || i18n.t('error.requestFailed'))
   }
   return resp.json()
 }

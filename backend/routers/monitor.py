@@ -20,12 +20,14 @@ def get_monitor_status():
     """获取当前监控状态"""
     config = watcher_manager.config
     threshold = config.monitor.context_threshold if config else 0.85
+    auto_summarize = config.monitor.auto_summarize if config else False
 
     return MonitorStatus(
         running=watcher_manager.running,
         started_at=watcher_manager.started_at.isoformat() if watcher_manager.started_at else None,
         watched_agents=watcher_manager.watched_agents,
         context_threshold=threshold,
+        auto_summarize=auto_summarize,
         summary_count=watcher_manager.summary_count,
         last_summary_time=watcher_manager.last_summary_time.isoformat() if watcher_manager.last_summary_time else None,
     )

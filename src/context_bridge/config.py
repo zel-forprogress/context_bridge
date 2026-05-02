@@ -32,7 +32,6 @@ class ProviderConfig:
     base_url: str = ""
     model: str = ""
     enabled: bool = True
-    priority: int = 99
 
 
 @dataclass
@@ -47,6 +46,7 @@ class MonitorConfig:
     interval: int = 5
     context_threshold: float = 0.85
     idle_timeout: int = 600
+    auto_summarize: bool = False
 
 
 @dataclass
@@ -85,7 +85,7 @@ def load_config(config_path: Path | None = None) -> AppConfig:
             paths=agent_data.get("paths", []),
         )
 
-    # 解析 providers
+    # 解析 providers（按配置文件中的顺序）
     for p in raw.get("summarizer", {}).get("providers", []):
         cfg.providers.append(
             ProviderConfig(
@@ -94,10 +94,8 @@ def load_config(config_path: Path | None = None) -> AppConfig:
                 base_url=p.get("base_url", ""),
                 model=p.get("model", ""),
                 enabled=p.get("enabled", True),
-                priority=p.get("priority", 99),
             )
         )
-    cfg.providers.sort(key=lambda x: x.priority)
 
     # 解析 local
     local_data = raw.get("summarizer", {}).get("local", {})
@@ -113,6 +111,7 @@ def load_config(config_path: Path | None = None) -> AppConfig:
         interval=mon_data.get("interval", 5),
         context_threshold=mon_data.get("context_threshold", 0.85),
         idle_timeout=mon_data.get("idle_timeout", 600),
+        auto_summarize=mon_data.get("auto_summarize", False),
     )
 
     return cfg

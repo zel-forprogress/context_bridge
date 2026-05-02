@@ -44,7 +44,6 @@ class CloudProvider:
         self.api_key = config.api_key
         self.base_url = config.base_url.rstrip("/")
         self.model = config.model
-        self.priority = config.priority
         self._client = httpx.Client(timeout=120)
 
     def chat(self, prompt: str) -> str:
@@ -99,7 +98,6 @@ class Summarizer:
         for p in providers or []:
             if p.enabled and p.api_key:
                 self._cloud_providers.append(CloudProvider(p))
-        self._cloud_providers.sort(key=lambda x: x.priority)
 
         if local_config and local_config.enabled:
             self._local_provider = OllamaProvider(local_config)
@@ -123,7 +121,7 @@ class Summarizer:
     def _call_with_fallback(self, prompt: str) -> str:
         errors: list[str] = []
 
-        # 按优先级尝试云端 provider
+        # 按配置顺序尝试云端 provider
         for provider in self._cloud_providers:
             try:
                 logger.info(f"尝试使用 {provider.name} 生成摘要...")

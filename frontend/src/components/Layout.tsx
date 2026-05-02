@@ -1,20 +1,27 @@
 import { Link, useLocation } from 'react-router-dom'
-
-const navItems = [
-  { path: '/', label: 'Agents', icon: '🤖' },
-  { path: '/summaries', label: 'Summaries', icon: '📋' },
-]
+import { useTranslation } from 'react-i18next'
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const location = useLocation()
+  const { t, i18n } = useTranslation()
+
+  const navItems = [
+    { path: '/', label: t('nav.agents'), icon: '🤖' },
+    { path: '/summaries', label: t('nav.summaries'), icon: '📋' },
+  ]
+
+  const toggleLanguage = () => {
+    const next = i18n.language === 'zh' ? 'en' : 'zh'
+    i18n.changeLanguage(next)
+  }
 
   return (
     <div className="flex h-screen bg-gray-50">
       {/* Sidebar */}
       <aside className="w-56 bg-white border-r border-gray-200 flex flex-col">
         <div className="p-4 border-b border-gray-200">
-          <h1 className="text-lg font-bold text-gray-900">Context Bridge</h1>
-          <p className="text-xs text-gray-500 mt-1">AI Agent Context Manager</p>
+          <h1 className="text-lg font-bold text-gray-900">{t('app.title')}</h1>
+          <p className="text-xs text-gray-500 mt-1">{t('app.subtitle')}</p>
         </div>
         <nav className="flex-1 p-2">
           {navItems.map((item) => {
@@ -38,6 +45,14 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             )
           })}
         </nav>
+        <div className="p-3 border-t border-gray-200">
+          <button
+            onClick={toggleLanguage}
+            className="w-full px-3 py-1.5 rounded-lg text-xs text-gray-500 hover:bg-gray-100 transition-colors"
+          >
+            {i18n.language === 'zh' ? 'English' : '中文'}
+          </button>
+        </div>
       </aside>
 
       {/* Main content */}

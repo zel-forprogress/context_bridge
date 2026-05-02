@@ -1,0 +1,84 @@
+{
+  "nav": {
+    "agents": "Agents",
+    "summaries": "Summaries"
+  },
+  "app": {
+    "title": "Context Bridge",
+    "subtitle": "AI Agent Context Manager"
+  },
+  "agent": {
+    "installed": "Installed",
+    "notDetected": "Not detected",
+    "conversations": "{{count}} conversations",
+    "notFound": "{{name}} installation directory not found"
+  },
+  "message": {
+    "user": "User",
+    "assistant": "Assistant",
+    "tokens": "~{{count}} tokens"
+  },
+  "summary": {
+    "title": "Summary",
+    "copyPrompt": "Copy Resume Prompt",
+    "copying": "Copying...",
+    "keyDecisions": "Key Decisions",
+    "pendingTasks": "Pending Tasks",
+    "filesModified": "Files Modified",
+    "created": "Created:"
+  },
+  "monitor": {
+    "title": "Context Monitor",
+    "start": "Start",
+    "stop": "Stop",
+    "monitoring": "Monitoring",
+    "stopped": "Stopped",
+    "agents": "Agents:",
+    "none": "None",
+    "threshold": "Threshold:",
+    "autoSummary": "Auto Summary:",
+    "on": "ON",
+    "off": "OFF",
+    "summaries": "Summaries:",
+    "last": "Last:"
+  },
+  "home": {
+    "detectedAgents": "Detected Agents",
+    "detectedDesc": "Auto-detected AI agents installed on your machine. Click an agent to browse conversations."
+  },
+  "conversations": {
+    "title": "{{name}} Conversations",
+    "found": "{{count}} conversations found",
+    "loading": "Loading...",
+    "noConversations": "No conversations found",
+    "messages": "{{count}} messages",
+    "tokens": "tokens",
+    "nearLimit": "Near limit!",
+    "home": "Home"
+  },
+  "detail": {
+    "conversation": "Conversation",
+    "messages": "{{count}} messages",
+    "tokens": "tokens",
+    "used": "% used",
+    "generating": "Generating...",
+    "generateSummary": "Generate Summary",
+    "summaryFailed": "Summary failed",
+    "home": "Home"
+  },
+  "saved": {
+    "title": "Saved Summaries",
+    "desc": "Previously generated conversation summaries. Copy the resume prompt to restore context in a new session.",
+    "empty": "No summaries saved yet"
+  },
+  "time": {
+    "justNow": "just now",
+    "minutesAgo": "{{count}}m ago",
+    "hoursAgo": "{{count}}h ago",
+    "daysAgo": "{{count}}d ago"
+  },
+  "error": {
+    "unknown": "Unknown error",
+    "requestFailed": "Request failed"
+  }
+}

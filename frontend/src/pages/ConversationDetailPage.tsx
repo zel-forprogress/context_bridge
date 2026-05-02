@@ -1,5 +1,6 @@
 import { useParams, Link } from 'react-router-dom'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useApi } from '../hooks/useApi'
 import { api } from '../api/client'
 import MessageBubble from '../components/MessageBubble'
@@ -9,6 +10,7 @@ import type { ConversationDetail, SummaryOut } from '../types'
 
 export default function ConversationDetailPage() {
   const { agentName, sessionId } = useParams<{ agentName: string; sessionId: string }>()
+  const { t } = useTranslation()
   const { data: conversation, loading, error } = useApi<ConversationDetail>(
     () => api.getConversation(agentName!, sessionId!),
     [agentName, sessionId],
@@ -25,7 +27,7 @@ export default function ConversationDetailPage() {
       const result = await api.summarize(agentName!, sessionId!)
       setSummary(result)
     } catch (e) {
-      setSummaryError(e instanceof Error ? e.message : 'Summary failed')
+      setSummaryError(e instanceof Error ? e.message : t('detail.summaryFailed'))
     } finally {
       setSummarizing(false)
     }
@@ -35,7 +37,7 @@ export default function ConversationDetailPage() {
     <div className="p-8 max-w-4xl mx-auto">
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 text-sm text-gray-500 mb-6">
-        <Link to="/" className="hover:text-blue-600">Home</Link>
+        <Link to="/" className="hover:text-blue-600">{t('detail.home')}</Link>
         <span>/</span>
         <Link to={`/agents/${agentName}/conversations`} className="hover:text-blue-600 capitalize">
           {agentName}
@@ -57,16 +59,16 @@ export default function ConversationDetailPage() {
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-xl font-bold text-gray-900 mb-1">Conversation</h2>
+              <h2 className="text-xl font-bold text-gray-900 mb-1">{t('detail.conversation')}</h2>
               <div className="flex items-center gap-4 text-sm text-gray-500">
-                <span>{conversation.messages.length} messages</span>
+                <span>{t('detail.messages', { count: conversation.messages.length })}</span>
                 <span>
                   {conversation.total_tokens >= 1000
                     ? `${(conversation.total_tokens / 1000).toFixed(1)}k`
                     : conversation.total_tokens}{' '}
-                  tokens
+                  {t('detail.tokens')}
                 </span>
-                <span>{(conversation.usage_ratio * 100).toFixed(1)}% used</span>
+                <span>{(conversation.usage_ratio * 100).toFixed(1)}{t('detail.used')}</span>
               </div>
             </div>
             <button
@@ -74,7 +76,7 @@ export default function ConversationDetailPage() {
               disabled={summarizing}
               className="px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {summarizing ? 'Generating...' : 'Generate Summary'}
+              {summarizing ? t('detail.generating') : t('detail.generateSummary')}
             </button>
           </div>
 

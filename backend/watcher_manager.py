@@ -146,8 +146,15 @@ class WatcherManager:
         usage = conversation.usage_ratio
         logger.info(f"[{agent_name}] {file_path.name} 上下文使用: {usage:.0%}")
 
-        # 检查是否需要生成摘要
+        # 检查是否超过阈值
         if usage < self._config.monitor.context_threshold:
+            return
+
+        logger.warning(f"[{agent_name}] {file_path.name} 上下文使用率达到 {usage:.0%}，已超过阈值 {self._config.monitor.context_threshold:.0%}")
+
+        # 自动摘要需要用户在配置中显式开启
+        if not self._config.monitor.auto_summarize:
+            logger.info("自动摘要未开启，请在界面中手动生成摘要，或在配置中设置 auto_summarize = true")
             return
 
         # 防止短时间内重复摘要同一会话
@@ -156,7 +163,7 @@ class WatcherManager:
             if (now - self._last_summary[summary_key]).seconds < 300:
                 return
 
-        logger.info(f"上下文使用率达到 {usage:.0%}，开始生成摘要...")
+        logger.info(f"自动摘要：上下文使用率达到 {usage:.0%}，开始生成摘要...")
 
         try:
             summary = summarizer.summarize(conversation)
