@@ -7,10 +7,6 @@ import threading
 from datetime import datetime
 from pathlib import Path
 
-import sys
-
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
-
 from context_bridge.config import AppConfig, load_config
 from context_bridge.core import AgentType
 from context_bridge.parsers import get_parser

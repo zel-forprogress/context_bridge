@@ -10,7 +10,7 @@ from fastapi import APIRouter, HTTPException
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from schemas import MonitorStatus
-from watcher_manager import watcher_manager
+from context_bridge.watcher_manager import watcher_manager
 
 router = APIRouter()
 

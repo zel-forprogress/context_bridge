@@ -4,10 +4,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from context_bridge.core import AgentType
+from context_bridge.core import AgentDetectionResult, AgentType
 from context_bridge.parsers import get_parser
-
-from schemas import AgentInfo
 
 AGENT_KNOWN_PATHS: dict[str, list[Path]] = {
     "claude": [
@@ -47,16 +45,16 @@ def _find_agent_base_path(agent_type: AgentType) -> str:
     return str(paths[0]) if paths else ""
 
 
-def detect_agents() -> list[AgentInfo]:
+def detect_agents() -> list[AgentDetectionResult]:
     """检测本机已安装的 AI Agent，返回列表（含未安装的，detected=False）"""
-    results: list[AgentInfo] = []
+    results: list[AgentDetectionResult] = []
     for agent_type in AgentType:
         search_paths = AGENT_KNOWN_PATHS.get(agent_type.value, [])
         detected = any(p.exists() for p in search_paths)
         base_path = _find_agent_base_path(agent_type)
         conv_count = _count_conversations(agent_type, search_paths) if detected else 0
         results.append(
-            AgentInfo(
+            AgentDetectionResult(
                 name=agent_type.value,
                 detected=detected,
                 path=base_path,

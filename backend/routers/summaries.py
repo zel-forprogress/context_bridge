@@ -15,7 +15,7 @@ from context_bridge.parsers import get_parser
 from context_bridge.session import SessionManager
 from context_bridge.summarizer import Summarizer
 
-from detector import AGENT_KNOWN_PATHS
+from context_bridge.detector import AGENT_KNOWN_PATHS
 from schemas import ConversationDetail, MessageOut, ResumePromptOut, SummaryOut
 
 router = APIRouter()

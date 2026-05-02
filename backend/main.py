@@ -15,7 +15,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from routers import agents, conversations, monitor, summaries
-from watcher_manager import watcher_manager
+from context_bridge.watcher_manager import watcher_manager
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(name)s] %(message)s")
 

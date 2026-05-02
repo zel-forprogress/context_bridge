@@ -53,6 +53,14 @@ class Conversation:
 
 
 @dataclass
+class AgentDetectionResult:
+    name: str
+    detected: bool
+    path: str
+    conversation_count: int
+
+
+@dataclass
 class ContextSummary:
     agent: AgentType
     session_id: str

@@ -12,7 +12,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent / "src"))
 from context_bridge.core import AgentType
 from context_bridge.parsers import get_parser
 
-from detector import AGENT_KNOWN_PATHS
+from context_bridge.detector import AGENT_KNOWN_PATHS
 from schemas import ConversationDetail, MessageOut
 
 router = APIRouter()
