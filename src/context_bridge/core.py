@@ -11,8 +11,6 @@ from pathlib import Path
 class AgentType(str, Enum):
     CODEX = "codex"
     CLAUDE = "claude"
-    CURSOR = "cursor"
-    CLINE = "cline"
 
 
 @dataclass

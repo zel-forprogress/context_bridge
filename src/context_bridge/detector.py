@@ -12,14 +12,6 @@ AGENT_KNOWN_PATHS: dict[str, list[Path]] = {
         Path.home() / ".claude",
         Path.home() / ".claude" / "projects",
     ],
-    "cursor": [
-        Path.home() / ".cursor" / "projects",
-        Path.home() / ".cursor" / "workspaceStorage",
-    ],
-    "cline": [
-        Path.home() / ".cline",
-        Path.home() / ".cline" / "data",
-    ],
     "codex": [
         Path.home() / ".codex" / "sessions",
         Path.home() / ".codex" / "archived_sessions",
