@@ -27,8 +27,9 @@ function getPythonCommand(): string {
 function getBackendPath(): string {
   // In development, backend is at project root /backend
   // In production, it's bundled
-  if (process.env.NODE_ENV === 'development') {
-    return path.join(__dirname, '..', '..', 'backend', 'main.py')
+  const devPath = path.join(__dirname, '..', '..', 'backend', 'main.py')
+  if (fs.existsSync(devPath)) {
+    return devPath
   }
   return path.join(process.resourcesPath, 'backend', 'main.py')
 }
@@ -52,6 +53,10 @@ export async function startPythonBackend(): Promise<number> {
   const pythonCmd = getPythonCommand()
   const backendPath = getBackendPath()
   const backendDir = path.dirname(backendPath)
+
+  if (!fs.existsSync(backendPath)) {
+    throw new Error(`Backend entry not found: ${backendPath}`)
+  }
 
   // Check Python is available
   try {

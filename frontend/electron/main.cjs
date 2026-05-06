@@ -28,8 +28,9 @@ function getPythonCommand() {
 }
 
 function getBackendPath() {
-  if (process.env.NODE_ENV === 'development') {
-    return path.join(__dirname, '..', '..', 'backend', 'main.py')
+  const devPath = path.join(__dirname, '..', '..', 'backend', 'main.py')
+  if (fs.existsSync(devPath)) {
+    return devPath
   }
   return path.join(process.resourcesPath, 'backend', 'main.py')
 }
@@ -56,6 +57,10 @@ async function startPythonBackend() {
   const pythonCmd = getPythonCommand()
   const backendPath = getBackendPath()
   const backendDir = path.dirname(backendPath)
+
+  if (!fs.existsSync(backendPath)) {
+    throw new Error(`Backend entry not found: ${backendPath}`)
+  }
 
   // Check Python is available
   try {
@@ -136,9 +141,11 @@ async function createWindow() {
 
   ipcMain.handle('get-backend-port', () => backendPort)
 
-  if (process.env.NODE_ENV === 'development') {
-    mainWindow.loadURL('http://localhost:5173')
-    mainWindow.webContents.openDevTools()
+  if (!app.isPackaged) {
+    mainWindow.loadURL(process.env.CONTEXT_BRIDGE_DEV_SERVER_URL || 'http://localhost:5173')
+    if (process.env.CONTEXT_BRIDGE_OPEN_DEVTOOLS === '1') {
+      mainWindow.webContents.openDevTools()
+    }
   } else {
     mainWindow.loadFile(path.join(__dirname, '..', 'dist', 'index.html'))
   }
