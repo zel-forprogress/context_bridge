@@ -13,6 +13,32 @@ from pathlib import Path
 from context_bridge.core import AgentType, Conversation, Message
 from context_bridge.parsers.base import BaseParser
 
+_SYSTEM_CTX_TAGS = (
+    "<permissions instructions>",
+    "<app-context>",
+    "<collaboration_mode>",
+    "<skills_instructions>",
+    "<plugins_instructions>",
+    "<environment_context>",
+)
+
+
+def _strip_system_context(text: str) -> str:
+    """剥离注入的系统上下文块（如 <app-context>...</app-context>）"""
+    result: list[str] = []
+    skip = False
+    for line in text.splitlines():
+        stripped = line.strip()
+        if any(stripped.startswith(tag) for tag in _SYSTEM_CTX_TAGS):
+            skip = True
+            continue
+        if skip and stripped.startswith("</"):
+            skip = False
+            continue
+        if not skip:
+            result.append(line)
+    return "\n".join(result).strip()
+
 
 class ClaudeParser(BaseParser):
     def can_parse(self, file_path: Path) -> bool:
@@ -79,20 +105,22 @@ class ClaudeParser(BaseParser):
 
     def _extract_content(self, entry: dict) -> str:
         """从 Claude Code 的消息条目中提取文本"""
+        raw = ""
         # 直接有 content 字段
         if isinstance(entry.get("content"), str):
-            return entry["content"]
-
+            raw = entry["content"]
         # content 是列表（多模态格式）
-        if isinstance(entry.get("content"), list):
+        elif isinstance(entry.get("content"), list):
             parts = []
             for block in entry["content"]:
                 if isinstance(block, dict) and block.get("type") == "text":
                     parts.append(block.get("text", ""))
-            return "\n".join(parts)
-
+            raw = "\n".join(parts)
         # message 嵌套
-        if isinstance(entry.get("message"), dict):
+        elif isinstance(entry.get("message"), dict):
             return self._extract_content(entry["message"])
 
-        return ""
+        # 剥离系统上下文块
+        if raw:
+            raw = _strip_system_context(raw)
+        return raw
