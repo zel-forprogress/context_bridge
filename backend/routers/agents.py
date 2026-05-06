@@ -61,11 +61,19 @@ def list_conversations(agent_name: str):
             if conv.last_activity:
                 last_activity_str = conv.last_activity.isoformat()
 
+            # 取第一条用户消息作为标题
+            title = conv.session_id
+            for msg in conv.messages:
+                if msg.role == "user":
+                    title = msg.content[:80].split("\n")[0]
+                    break
+
             conversations.append(
                 ConversationSummary(
                     id=conv.session_id,
                     agent=conv.agent.value,
                     file_path=str(conv.file_path),
+                    title=title,
                     message_count=len(conv.messages),
                     total_tokens=conv.total_tokens,
                     max_tokens=conv.max_tokens,

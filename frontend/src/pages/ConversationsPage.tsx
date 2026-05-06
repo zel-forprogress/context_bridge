@@ -89,7 +89,7 @@ export default function ConversationsPage() {
             >
               <div className="flex items-center justify-between mb-2">
                 <h3 className="text-sm font-medium text-gray-900 truncate max-w-md">
-                  {conv.id}
+                  {conv.title}
                 </h3>
                 <span className="text-xs text-gray-400">
                   {formatDate(conv.last_activity, t)}

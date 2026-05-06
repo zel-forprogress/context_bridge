@@ -9,6 +9,7 @@ export interface ConversationSummary {
   id: string
   agent: string
   file_path: string
+  title: string
   message_count: number
   total_tokens: number
   max_tokens: number

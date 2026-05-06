@@ -12,6 +12,7 @@ class ConversationSummary(BaseModel):
     id: str
     agent: str
     file_path: str
+    title: str
     message_count: int
     total_tokens: int
     max_tokens: int
