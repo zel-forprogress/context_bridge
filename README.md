@@ -1,159 +1,231 @@
 # Context Bridge
 
-AI Agent 上下文监控与自动恢复工具。当对话上下文即将耗尽时，自动生成摘要并保存，方便在新会话中恢复上下文。
+Context Bridge 是一个 AI Agent 上下文监控与恢复工具。它会读取本机 AI 编程助手的对话记录，估算上下文使用量，并在需要时生成结构化摘要，帮助你在新会话中快速接上之前的工作。
 
-## 为什么需要这个工具？
+当前项目形态是：
 
-使用 AI Agent 进行代码开发时，经常会遇到：
-- 对话上下文窗口耗尽，压缩失败
-- 需要手动开新窗口，重新描述之前的工作
-- 浪费时间重复解释项目背景和技术决策
+- Python 核心库：负责配置、Agent 检测、对话解析、文件监控、摘要生成和摘要保存。
+- FastAPI 后端：把核心能力包装成本地 API。
+- React + Electron 前端：提供桌面界面，用于查看 Agent、浏览对话、生成摘要和复制恢复提示词。
 
-Context Bridge 通过文件监控和智能摘要，自动保存对话上下文，让你轻松在新会话中恢复工作。
+## 为什么需要它
+
+使用 Claude Code、Cursor、Cline 等 AI Agent 进行开发时，经常会遇到这些问题：
+
+- 对话上下文快满了，需要开新会话继续工作。
+- 新会话缺少之前的项目背景、技术决策和待办事项。
+- 手动整理上下文耗时，也容易遗漏关键细节。
+
+Context Bridge 的目标是把这些上下文自动沉淀下来，让新会话可以从一份清晰的摘要继续。
 
 ## 功能
 
-- 监控多个 AI Agent 的对话文件（Claude Code、Cursor、Cline）
-- 实时估算上下文使用率
-- 超过阈值时自动生成结构化摘要
-- 多云端 API 降级 + 本地模型兜底
-- 保存关键决策、待办任务、已修改文件
+- 检测本机已安装或已产生对话记录的 AI Agent。
+- 支持解析 Claude Code、Cursor、Cline 的对话文件。
+- 估算消息 token 数和上下文使用率。
+- 手动或自动生成结构化摘要。
+- 支持多个云端 LLM provider 按顺序降级。
+- 支持本地 Ollama 作为兜底摘要模型。
+- 将摘要保存到 `~/.context-bridge/sessions/`。
+- 生成可复制到新会话的恢复提示词。
+- 提供 Electron 桌面界面和 FastAPI 本地接口。
 
-## 安装
+## 项目结构
 
-```bash
-cd context-bridge
-pip install -e .
+```text
+context_bridge/
+├── backend/                    # FastAPI 后端
+│   ├── main.py                 # API 入口，启动时会启动文件监控
+│   ├── schemas.py              # API 响应模型
+│   └── routers/
+│       ├── agents.py           # Agent 检测与对话列表
+│       ├── conversations.py    # 对话详情
+│       ├── monitor.py          # 监控状态与开关
+│       └── summaries.py        # 摘要生成、列表、恢复提示词
+├── frontend/                   # React + Electron 前端
+│   ├── electron/               # Electron 主进程与 Python 后端管理
+│   └── src/                    # React 页面、组件、API client
+├── src/context_bridge/         # Python 核心库
+│   ├── config.py               # 配置加载
+│   ├── core.py                 # 核心数据结构
+│   ├── detector.py             # Agent 自动检测
+│   ├── session.py              # 摘要保存与恢复提示词生成
+│   ├── summarizer.py           # LLM 摘要生成与降级
+│   ├── watcher.py              # 文件系统监控
+│   ├── watcher_manager.py      # 监控生命周期管理
+│   └── parsers/                # Agent 对话解析器
+├── config.example.toml         # 配置模板
+├── config.toml                 # 本地配置，不应提交
+└── pyproject.toml              # Python 包配置
 ```
 
+## 支持的 Agent
+
+| Agent | 状态 | 说明 |
+| --- | --- | --- |
+| Claude Code | 已支持 | 解析 `.jsonl` 对话文件，默认扫描 `~/.claude/projects/` |
+| Cursor | 基础支持 | 解析 JSON / JSONL 格式的导出或对话文件 |
+| Cline | 基础支持 | 解析 JSON / JSONL 格式的对话文件 |
+
 ## 配置
+
+先从模板复制配置文件：
 
 ```bash
 cp config.example.toml config.toml
 ```
 
-编辑 `config.toml`，填入你的 API Key 和 Agent 路径。
-
-### 配置示例
+然后编辑 `config.toml`，配置需要监控的 Agent 路径和摘要模型。
 
 ```toml
-# 监控的 agent
 [agents.claude]
 enabled = true
 type = "claude"
 paths = ["~/.claude/projects/"]
 
-# 摘要提供者（按优先级）
+[agents.cursor]
+enabled = false
+type = "cursor"
+paths = ["~/.cursor/workspaceStorage/"]
+
+[agents.cline]
+enabled = false
+type = "cline"
+paths = ["~/.cline/conversations/"]
+
 [[summarizer.providers]]
 name = "deepseek"
 enabled = true
 api_key = "sk-xxx"
 base_url = "https://api.deepseek.com"
 model = "deepseek-chat"
-priority = 1
 
-# 本地模型兜底
 [summarizer.local]
 enabled = true
 base_url = "http://localhost:11434"
 model = "qwen2.5:7b"
 
-# 监控行为
 [monitor]
 interval = 5
 context_threshold = 0.85
 idle_timeout = 600
+auto_summarize = false
 ```
 
-## 使用
+说明：
+
+- `context_threshold` 是触发摘要提醒的上下文使用率阈值。
+- `auto_summarize` 默认为 `false`，建议先通过界面手动生成摘要，避免无意消耗 token。
+- 云端 provider 会按配置顺序尝试，全部失败后再使用本地 Ollama。
+
+## 开发运行
+
+### 1. 安装 Python 依赖
 
 ```bash
-# 启动后台监控
-context-bridge watch
-
-# 手动摘要指定文件
-context-bridge summarize claude ~/.claude/projects/xxx/conversations/yyy.jsonl
-
-# 查看已保存的摘要
-context-bridge list
-
-# 查看恢复提示
-context-bridge resume ~/.context-bridge/sessions/xxx.json
+pip install -e .
+pip install -r backend/requirements.txt
 ```
+
+### 2. 启动 FastAPI 后端
+
+```bash
+cd backend
+python -m uvicorn main:app --host 127.0.0.1 --port 8000 --reload
+```
+
+后端健康检查：
+
+```bash
+curl http://127.0.0.1:8000/api/health
+```
+
+### 3. 启动前端开发服务
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+默认前端地址是 `http://localhost:5173`。
+
+### 4. 启动 Electron 桌面端
+
+```bash
+cd frontend
+npm run dev:electron
+```
+
+Electron 模式会自动启动一个本地 Python 后端，并通过 IPC 将后端端口传给前端。
+
+## 常用 API
+
+| 方法 | 路径 | 作用 |
+| --- | --- | --- |
+| `GET` | `/api/health` | 健康检查 |
+| `GET` | `/api/agents` | 检测本机 Agent |
+| `GET` | `/api/agents/{agent}/conversations` | 获取指定 Agent 的对话列表 |
+| `GET` | `/api/conversations/{agent}/{session_id}` | 获取对话详情 |
+| `POST` | `/api/conversations/{agent}/{session_id}/summarize` | 为指定对话生成摘要 |
+| `GET` | `/api/summaries` | 查看已保存摘要 |
+| `GET` | `/api/summaries/{filename}` | 获取恢复提示词 |
+| `GET` | `/api/monitor/status` | 查看监控状态 |
+| `POST` | `/api/monitor/start` | 启动监控 |
+| `POST` | `/api/monitor/stop` | 停止监控 |
 
 ## 工作流程
 
-1. `context-bridge watch` 后台运行
-2. 自动监控 Agent 对话文件变化
-3. 上下文使用率超过 85% 时触发摘要
-4. 摘要保存到 `~/.context-bridge/sessions/`
-5. 在新会话中粘贴 `.prompt.md` 文件内容即可恢复上下文
+1. 后端启动后加载 `config.toml`。
+2. 系统检测 Claude Code、Cursor、Cline 的已知目录。
+3. 文件监控器监听 `.json` 和 `.jsonl` 对话文件变化。
+4. 解析器将对话文件转换为统一的 `Conversation` 数据结构。
+5. 当上下文使用率超过阈值时，系统记录状态；如果开启了 `auto_summarize`，会自动生成摘要。
+6. 用户也可以在前端对某个会话手动生成摘要。
+7. 摘要保存为 JSON，并可转换成新会话可直接使用的恢复提示词。
 
-## 支持的 Agent
+## 摘要结果
 
-| Agent | 状态 | 说明 |
-|-------|------|------|
-| Claude Code | 已支持 | JSONL 格式，自动解析 |
-| Cursor | 基础支持 | JSON 格式 |
-| Cline | 基础支持 | JSON 格式 |
+摘要会包含：
 
-## 摘要提供者
+- 当前对话目标和进展。
+- 已做出的关键技术决策。
+- 尚未完成的任务。
+- 对话中涉及或修改过的文件。
 
-配置多个 provider 时，按配置文件中的书写顺序依次尝试，全部失败后兜底到本地 Ollama。
+默认保存目录：
 
-- DeepSeek（便宜，性价比高）
-- MiMo（免费，通过硅基流动调用）
-- OpenAI / Gemini（主流云端服务）
-- 本地 Ollama（兜底，永远可用）
-
-## 项目结构
-
-```
-context-bridge/
-├── pyproject.toml
-├── config.example.toml
-├── README.md
-└── src/
-    └── context_bridge/
-        ├── __init__.py
-        ├── __main__.py
-        ├── cli.py          # CLI 入口
-        ├── config.py       # 配置管理
-        ├── core.py         # 核心数据结构
-        ├── watcher.py      # 文件监控
-        ├── summarizer.py   # 摘要生成
-        ├── session.py      # 会话管理
-        └── parsers/
-            ├── base.py     # 解析器基类
-            ├── claude.py   # Claude Code 解析器
-            ├── cursor.py   # Cursor 解析器
-            └── cline.py    # Cline 解析器
+```text
+~/.context-bridge/sessions/
 ```
 
-## 扩展
+## 扩展新的 Agent
 
-### 添加新的 Agent 支持
-
-继承 `BaseParser` 并实现 `can_parse` 和 `parse` 方法：
+新增 Agent 支持时，需要实现一个新的 parser：
 
 ```python
+from pathlib import Path
+
+from context_bridge.core import Conversation
 from context_bridge.parsers.base import BaseParser
-from context_bridge.core import AgentType, Conversation
+
 
 class MyAgentParser(BaseParser):
-    def can_parse(self, file_path):
-        return "myagent" in str(file_path)
+    def can_parse(self, file_path: Path) -> bool:
+        return "myagent" in str(file_path).lower()
 
-    def parse(self, file_path):
-        # 解析逻辑
-        return Conversation(...)
+    def parse(self, file_path: Path) -> Conversation | None:
+        # 读取并解析对话文件，返回统一的 Conversation 对象
+        ...
 ```
 
-然后在 `parsers/__init__.py` 中注册。
+然后在 `src/context_bridge/parsers/__init__.py` 中注册到 `PARSERS`。
 
-### 添加新的摘要提供者
+## 当前注意事项
 
-在 `config.toml` 中添加新的 provider 配置即可，系统会自动按优先级尝试。
+- README 中旧版提到的 `context-bridge watch/list/resume` CLI 命令，当前代码里尚未实现对应入口。
+- `config.toml` 可能包含 API Key，应保持本地使用，不要提交。
+- 前端目录当前包含 `node_modules/`，新环境中仍建议执行 `npm install` 重新安装依赖。
 
 ## License
 
