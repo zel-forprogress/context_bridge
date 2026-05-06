@@ -11,10 +11,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     { path: '/settings', label: t('nav.settings'), icon: '⚙️' },
   ]
 
-  const toggleLanguage = () => {
-    const next = i18n.language === 'zh' ? 'en' : 'zh'
-    i18n.changeLanguage(next)
-  }
+  const isZh = i18n.language === 'zh'
 
   return (
     <div className="flex h-screen bg-gray-50">
@@ -47,12 +44,25 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           })}
         </nav>
         <div className="p-3 border-t border-gray-200">
-          <button
-            onClick={toggleLanguage}
-            className="w-full px-3 py-1.5 rounded-lg text-xs text-gray-500 hover:bg-gray-100 transition-colors"
-          >
-            {i18n.language === 'zh' ? 'English' : '中文'}
-          </button>
+          <div className="flex items-center justify-center gap-1 text-sm">
+            <button
+              onClick={() => i18n.changeLanguage('zh')}
+              className={`px-1.5 py-0.5 rounded transition-colors ${
+                isZh ? 'font-bold text-gray-900' : 'text-gray-400 hover:text-gray-600'
+              }`}
+            >
+              中文
+            </button>
+            <span className="text-gray-300">/</span>
+            <button
+              onClick={() => i18n.changeLanguage('en')}
+              className={`px-1.5 py-0.5 rounded transition-colors ${
+                !isZh ? 'font-bold text-gray-900' : 'text-gray-400 hover:text-gray-600'
+              }`}
+            >
+              English
+            </button>
+          </div>
         </div>
       </aside>
 
