@@ -1,7 +1,8 @@
 {
   "nav": {
     "agents": "Agent 管理",
-    "summaries": "摘要列表"
+    "summaries": "摘要列表",
+    "settings": "设置"
   },
   "app": {
     "title": "Context Bridge",
@@ -80,5 +81,31 @@
   "error": {
     "unknown": "未知错误",
     "requestFailed": "请求失败"
+  },
+  "settings": {
+    "title": "设置",
+    "providers": "LLM 提供商",
+    "addProvider": "添加提供商",
+    "providerName": "提供商名称",
+    "enabled": "启用",
+    "remove": "移除",
+    "apiKey": "API Key",
+    "apiKeyPlaceholder": "输入 API Key",
+    "baseUrl": "Base URL",
+    "model": "模型",
+    "localModel": "本地模型",
+    "monitor": "监控设置",
+    "interval": "检查间隔（秒）",
+    "contextThreshold": "上下文阈值",
+    "idleTimeout": "空闲超时（秒）",
+    "autoSummarize": "自动摘要",
+    "save": "保存配置",
+    "saving": "保存中...",
+    "saveSuccess": "配置已保存",
+    "saveError": "保存失败",
+    "loadError": "加载配置失败"
+  },
+  "common": {
+    "loading": "加载中..."
   }
 }

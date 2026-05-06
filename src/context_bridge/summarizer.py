@@ -7,6 +7,7 @@ import logging
 from typing import Protocol
 
 import httpx
+import requests
 
 from context_bridge.config import LocalConfig, ProviderConfig
 from context_bridge.core import Conversation, ContextSummary
@@ -71,12 +72,12 @@ class OllamaProvider:
     def __init__(self, config: LocalConfig):
         self.base_url = config.base_url.rstrip("/")
         self.model = config.model
-        self._client = httpx.Client(timeout=300)
 
     def chat(self, prompt: str) -> str:
-        resp = self._client.post(
+        resp = requests.post(
             f"{self.base_url}/api/generate",
             json={"model": self.model, "prompt": prompt, "stream": False},
+            timeout=300,
         )
         resp.raise_for_status()
         return resp.json()["response"]

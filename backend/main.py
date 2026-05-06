@@ -14,7 +14,7 @@ sys.path.insert(0, str(_root / "backend"))
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from routers import agents, conversations, monitor, summaries
+from routers import agents, config, conversations, monitor, summaries
 from context_bridge.watcher_manager import watcher_manager
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(name)s] %(message)s")
@@ -30,6 +30,7 @@ app.add_middleware(
 )
 
 app.include_router(agents.router, prefix="/api")
+app.include_router(config.router, prefix="/api")
 app.include_router(conversations.router, prefix="/api")
 app.include_router(monitor.router, prefix="/api")
 app.include_router(summaries.router, prefix="/api")

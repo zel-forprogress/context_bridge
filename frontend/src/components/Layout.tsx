@@ -8,6 +8,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const navItems = [
     { path: '/', label: t('nav.agents'), icon: '🤖' },
     { path: '/summaries', label: t('nav.summaries'), icon: '📋' },
+    { path: '/settings', label: t('nav.settings'), icon: '⚙️' },
   ]
 
   const toggleLanguage = () => {

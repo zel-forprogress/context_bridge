@@ -60,4 +60,13 @@ export const api = {
 
   stopMonitor: () =>
     request<{ status: string }>('/monitor/stop', { method: 'POST' }),
+
+  getConfig: () => request<any>('/config'),
+
+  updateConfig: (config: any) =>
+    request<any>('/config', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(config),
+    }),
 }
