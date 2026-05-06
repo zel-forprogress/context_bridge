@@ -1,13 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import AgentIcon from './AgentIcon'
 import type { AgentInfo } from '../types'
-
-const agentIcons: Record<string, string> = {
-  claude: '🟣',
-  cursor: '🔵',
-  cline: '🟢',
-  codex: '⚫',
-}
 
 export default function AgentCard({ agent }: { agent: AgentInfo }) {
   const navigate = useNavigate()
@@ -25,7 +19,7 @@ export default function AgentCard({ agent }: { agent: AgentInfo }) {
     >
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
-          <span className="text-xl">{agentIcons[agent.name] || '⚪'}</span>
+          <AgentIcon agent={agent.name} />
           <h3 className="text-base font-semibold text-gray-900 capitalize">
             {agent.name}
           </h3>
