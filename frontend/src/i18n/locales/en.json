@@ -97,7 +97,6 @@
     "monitor": "Monitor Settings",
     "interval": "Check Interval (seconds)",
     "contextThreshold": "Context Threshold",
-    "idleTimeout": "Idle Timeout (seconds)",
     "autoSummarize": "Auto Summarize",
     "save": "Save Configuration",
     "saving": "Saving...",

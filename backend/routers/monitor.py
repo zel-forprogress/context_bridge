@@ -10,9 +10,12 @@ from fastapi import APIRouter, HTTPException
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from schemas import MonitorStatus
+from context_bridge.session import SessionManager
 from context_bridge.watcher_manager import watcher_manager
 
 router = APIRouter()
+
+_session_mgr = SessionManager()
 
 
 @router.get("/monitor/status", response_model=MonitorStatus)
@@ -22,14 +25,23 @@ def get_monitor_status():
     threshold = config.monitor.context_threshold if config else 0.85
     auto_summarize = config.monitor.auto_summarize if config else False
 
+    # 从磁盘读取实际摘要数量和最新时间
+    summaries = _session_mgr.list_recent(limit=9999)
+    summary_count = len(summaries)
+    last_summary_time = None
+    if summaries:
+        last_summary_time = summaries[0].stat().st_mtime
+        from datetime import datetime
+        last_summary_time = datetime.fromtimestamp(last_summary_time)
+
     return MonitorStatus(
         running=watcher_manager.running,
         started_at=watcher_manager.started_at.isoformat() if watcher_manager.started_at else None,
         watched_agents=watcher_manager.watched_agents,
         context_threshold=threshold,
         auto_summarize=auto_summarize,
-        summary_count=watcher_manager.summary_count,
-        last_summary_time=watcher_manager.last_summary_time.isoformat() if watcher_manager.last_summary_time else None,
+        summary_count=summary_count,
+        last_summary_time=last_summary_time.isoformat() if last_summary_time else None,
     )
 
 

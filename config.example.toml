@@ -64,7 +64,5 @@ model = "qwen2.5:7b"
 interval = 5
 # 上下文使用率阈值，超过此值视为上下文即将用尽（0.0 - 1.0）
 context_threshold = 0.85
-# 对话空闲多久后自动保存摘要（秒）
-idle_timeout = 600
 # 是否在超过阈值时自动调用 LLM 生成摘要（默认关闭，建议在界面中手动生成以节省 token）
 auto_summarize = false

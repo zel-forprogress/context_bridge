@@ -57,6 +57,17 @@ class WatcherManager:
     def config(self) -> AppConfig | None:
         return self._config
 
+    def reload_config(self, config_path: Path | None = None) -> bool:
+        """重新加载配置文件（不停止监控）"""
+        with self._lock:
+            try:
+                self._config = load_config(config_path)
+                logger.info("配置已重新加载")
+                return True
+            except Exception as e:
+                logger.error(f"重新加载配置失败: {e}")
+                return False
+
     def start(self, config_path: Path | None = None) -> bool:
         """启动监控，返回是否成功"""
         with self._lock:

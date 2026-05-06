@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { api } from '../api/client'
+import { notifyConfigChanged } from '../hooks/useConfigSync'
 
 interface Provider {
   name: string
@@ -20,7 +21,6 @@ interface LocalConfig {
 interface MonitorConfig {
   interval: number
   context_threshold: number
-  idle_timeout: number
   auto_summarize: boolean
 }
 
@@ -62,6 +62,8 @@ export default function SettingsPage() {
       setMessage({ type: 'success', text: t('settings.saveSuccess') })
       // 重新加载配置以获取掩码后的 key
       await loadConfig()
+      // 通知其他组件配置已变更
+      notifyConfigChanged()
     } catch {
       setMessage({ type: 'error', text: t('settings.saveError') })
     } finally {
@@ -285,21 +287,6 @@ export default function SettingsPage() {
                 min="0"
                 max="1"
                 step="0.05"
-                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-blue-400"
-              />
-            </div>
-            <div>
-              <label className="block text-xs text-gray-500 mb-1">{t('settings.idleTimeout')}</label>
-              <input
-                type="number"
-                value={config.monitor.idle_timeout}
-                onChange={(e) =>
-                  setConfig({
-                    ...config,
-                    monitor: { ...config.monitor, idle_timeout: Number(e.target.value) },
-                  })
-                }
-                min="60"
                 className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-blue-400"
               />
             </div>

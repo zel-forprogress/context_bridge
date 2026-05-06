@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useApi } from '../hooks/useApi'
 import { api } from '../api/client'
+import { useConfigSync } from '../hooks/useConfigSync'
 import AgentCard from '../components/AgentCard'
 import LoadingSpinner from '../components/LoadingSpinner'
 import type { AgentInfo, MonitorStatus } from '../types'
@@ -10,6 +11,9 @@ function MonitorPanel() {
   const { t } = useTranslation()
   const { data: status, loading, reload } = useApi<MonitorStatus>(() => api.getMonitorStatus())
   const [actionLoading, setActionLoading] = useState(false)
+
+  // 监听配置变更
+  useConfigSync(useCallback(() => { reload() }, [reload]))
 
   const toggleMonitor = async () => {
     if (!status) return

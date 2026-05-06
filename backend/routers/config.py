@@ -12,6 +12,7 @@ from pydantic import BaseModel
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent / "src"))
 
 from context_bridge.config import load_config, AppConfig, ProviderConfig, LocalConfig, MonitorConfig
+from context_bridge.watcher_manager import watcher_manager
 
 router = APIRouter()
 
@@ -35,7 +36,6 @@ class LocalUpdate(BaseModel):
 class MonitorUpdate(BaseModel):
     interval: int = 5
     context_threshold: float = 0.85
-    idle_timeout: int = 600
     auto_summarize: bool = False
 
 
@@ -78,7 +78,6 @@ def get_config():
         "monitor": {
             "interval": cfg.monitor.interval,
             "context_threshold": cfg.monitor.context_threshold,
-            "idle_timeout": cfg.monitor.idle_timeout,
             "auto_summarize": cfg.monitor.auto_summarize,
         },
     }
@@ -118,7 +117,6 @@ def _build_toml(cfg: AppConfig) -> str:
     lines.append("[monitor]")
     lines.append(f"interval = {cfg.monitor.interval}")
     lines.append(f"context_threshold = {cfg.monitor.context_threshold}")
-    lines.append(f"idle_timeout = {cfg.monitor.idle_timeout}")
     lines.append(f"auto_summarize = {str(cfg.monitor.auto_summarize).lower()}")
     lines.append("")
 
@@ -153,11 +151,13 @@ def update_config(body: ConfigUpdate):
         cfg.monitor = MonitorConfig(
             interval=body.monitor.interval,
             context_threshold=body.monitor.context_threshold,
-            idle_timeout=body.monitor.idle_timeout,
             auto_summarize=body.monitor.auto_summarize,
         )
 
     toml_content = _build_toml(cfg)
     CONFIG_PATH.write_text(toml_content, encoding="utf-8")
+
+    # 通知 watcher_manager 重新加载配置
+    watcher_manager.reload_config(CONFIG_PATH)
 
     return {"status": "ok"}

@@ -97,7 +97,6 @@
     "monitor": "监控设置",
     "interval": "检查间隔（秒）",
     "contextThreshold": "上下文阈值",
-    "idleTimeout": "空闲超时（秒）",
     "autoSummarize": "自动摘要",
     "save": "保存配置",
     "saving": "保存中...",

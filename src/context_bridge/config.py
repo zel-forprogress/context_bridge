@@ -45,7 +45,6 @@ class LocalConfig:
 class MonitorConfig:
     interval: int = 5
     context_threshold: float = 0.85
-    idle_timeout: int = 600
     auto_summarize: bool = False
 
 
@@ -110,7 +109,6 @@ def load_config(config_path: Path | None = None) -> AppConfig:
     cfg.monitor = MonitorConfig(
         interval=mon_data.get("interval", 5),
         context_threshold=mon_data.get("context_threshold", 0.85),
-        idle_timeout=mon_data.get("idle_timeout", 600),
         auto_summarize=mon_data.get("auto_summarize", False),
     )
 
