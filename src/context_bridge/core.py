@@ -12,6 +12,7 @@ class AgentType(str, Enum):
     CLAUDE = "claude"
     CURSOR = "cursor"
     CLINE = "cline"
+    CODEX = "codex"
 
 
 @dataclass

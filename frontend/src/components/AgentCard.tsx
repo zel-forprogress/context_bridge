@@ -6,6 +6,7 @@ const agentIcons: Record<string, string> = {
   claude: '🟣',
   cursor: '🔵',
   cline: '🟢',
+  codex: '⚫',
 }
 
 export default function AgentCard({ agent }: { agent: AgentInfo }) {

@@ -4,12 +4,14 @@ from context_bridge.core import AgentType, Conversation
 from context_bridge.parsers.base import BaseParser
 from context_bridge.parsers.claude import ClaudeParser
 from context_bridge.parsers.cline import ClineParser
+from context_bridge.parsers.codex import CodexParser
 from context_bridge.parsers.cursor import CursorParser
 
 PARSERS: dict[AgentType, type[BaseParser]] = {
     AgentType.CLAUDE: ClaudeParser,
     AgentType.CURSOR: CursorParser,
     AgentType.CLINE: ClineParser,
+    AgentType.CODEX: CodexParser,
 }
 
 
@@ -20,4 +22,11 @@ def get_parser(agent_type: AgentType) -> BaseParser:
     return cls()
 
 
-__all__ = ["get_parser", "BaseParser", "ClaudeParser", "CursorParser", "ClineParser"]
+__all__ = [
+    "get_parser",
+    "BaseParser",
+    "ClaudeParser",
+    "CursorParser",
+    "ClineParser",
+    "CodexParser",
+]

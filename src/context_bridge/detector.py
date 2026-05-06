@@ -20,6 +20,10 @@ AGENT_KNOWN_PATHS: dict[str, list[Path]] = {
         Path.home() / ".cline",
         Path.home() / ".cline" / "data",
     ],
+    "codex": [
+        Path.home() / ".codex" / "sessions",
+        Path.home() / ".codex" / "archived_sessions",
+    ],
 }
 
 
@@ -27,12 +31,18 @@ def _count_conversations(agent_type: AgentType, search_paths: list[Path]) -> int
     """遍历目录，用对应 parser 的 can_parse 统计对话文件数"""
     parser = get_parser(agent_type)
     count = 0
+    seen: set[str] = set()
     for base_path in search_paths:
         if not base_path.exists():
             continue
         for file_path in base_path.rglob("*"):
-            if file_path.is_file() and parser.can_parse(file_path):
-                count += 1
+            if not file_path.is_file() or not parser.can_parse(file_path):
+                continue
+            key = str(file_path.resolve())
+            if key in seen:
+                continue
+            seen.add(key)
+            count += 1
     return count
 
 

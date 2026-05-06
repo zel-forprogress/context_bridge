@@ -63,10 +63,12 @@ def _find_conversation_file(agent_name: str, session_id: str) -> Path | None:
         for file_path in base_path.rglob("*"):
             if not file_path.is_file():
                 continue
-            if file_path.stem != session_id:
-                continue
             if parser.can_parse(file_path):
-                return file_path
+                if file_path.stem == session_id:
+                    return file_path
+                conv = parser.parse(file_path)
+                if conv and conv.session_id == session_id:
+                    return file_path
     return None
 
 

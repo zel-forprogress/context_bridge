@@ -18,6 +18,11 @@ enabled = false
 type = "cline"
 paths = ["~/.cline/conversations/"]
 
+[agents.codex]
+enabled = true
+type = "codex"
+paths = ["~/.codex/sessions/", "~/.codex/archived_sessions/"]
+
 # 摘要提供者配置（按配置顺序依次尝试，全部失败后兜底到本地模型）
 [[summarizer.providers]]
 name = "deepseek"

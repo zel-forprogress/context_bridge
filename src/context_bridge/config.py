@@ -20,7 +20,7 @@ else:
 @dataclass
 class AgentConfig:
     name: str
-    type: str  # claude / cursor / cline
+    type: str  # claude / cursor / cline / codex
     enabled: bool = True
     paths: list[str] = field(default_factory=list)
 
@@ -124,6 +124,11 @@ def _default_config() -> AppConfig:
                 name="claude",
                 type="claude",
                 paths=["~/.claude/projects/"],
+            ),
+            "codex": AgentConfig(
+                name="codex",
+                type="codex",
+                paths=["~/.codex/sessions/", "~/.codex/archived_sessions/"],
             ),
         },
         providers=[],
