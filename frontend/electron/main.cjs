@@ -139,6 +139,8 @@ async function createWindow() {
     },
   })
 
+  mainWindow.removeMenu()
+
   ipcMain.handle('get-backend-port', () => backendPort)
 
   if (!app.isPackaged) {
