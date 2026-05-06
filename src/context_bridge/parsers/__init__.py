@@ -8,10 +8,10 @@ from context_bridge.parsers.codex import CodexParser
 from context_bridge.parsers.cursor import CursorParser
 
 PARSERS: dict[AgentType, type[BaseParser]] = {
+    AgentType.CODEX: CodexParser,
     AgentType.CLAUDE: ClaudeParser,
     AgentType.CURSOR: CursorParser,
     AgentType.CLINE: ClineParser,
-    AgentType.CODEX: CodexParser,
 }
 
 

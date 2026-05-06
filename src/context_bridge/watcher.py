@@ -23,8 +23,8 @@ class ConversationFileHandler(FileSystemEventHandler):
         if event.is_directory:
             return
         path = Path(event.src_path)
-        # 只关注 jsonl / json 文件
-        if path.suffix not in (".jsonl", ".json"):
+        # 只关注当前 parser 支持的轻量对话文件
+        if path.suffix not in (".jsonl", ".json", ".txt"):
             return
         # 简单防抖：同一文件 1 秒内只触发一次
         key = str(path)

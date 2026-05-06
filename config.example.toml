@@ -2,6 +2,11 @@
 # 复制为 config.toml 并填入你的配置
 
 # 监控的 agent 列表
+[agents.codex]
+enabled = true
+type = "codex"
+paths = ["~/.codex/sessions/", "~/.codex/archived_sessions/"]
+
 [agents.claude]
 enabled = true
 type = "claude"
@@ -11,17 +16,12 @@ paths = ["~/.claude/projects/"]
 [agents.cursor]
 enabled = false
 type = "cursor"
-paths = ["~/.cursor/workspaceStorage/"]
+paths = ["~/.cursor/projects/", "~/.cursor/workspaceStorage/"]
 
 [agents.cline]
 enabled = false
 type = "cline"
 paths = ["~/.cline/conversations/"]
-
-[agents.codex]
-enabled = true
-type = "codex"
-paths = ["~/.codex/sessions/", "~/.codex/archived_sessions/"]
 
 # 摘要提供者配置（按配置顺序依次尝试，全部失败后兜底到本地模型）
 [[summarizer.providers]]

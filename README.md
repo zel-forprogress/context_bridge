@@ -63,10 +63,10 @@ context_bridge/
 
 | Agent | 状态 | 说明 |
 | --- | --- | --- |
-| Claude Code | 已支持 | 解析 `.jsonl` 对话文件，默认扫描 `~/.claude/projects/` |
-| Cursor | 基础支持 | 解析 JSON / JSONL 格式的导出或对话文件 |
-| Cline | 基础支持 | 解析 JSON / JSONL 格式的对话文件 |
 | Codex | 已支持 | 解析 `~/.codex/sessions/` 和 `~/.codex/archived_sessions/` 下的 rollout JSONL |
+| Claude Code | 已支持 | 解析 `.jsonl` 对话文件，默认扫描 `~/.claude/projects/` |
+| Cursor | 基础支持 | 解析 `~/.cursor/projects/**/agent-transcripts/*.txt`，以及 JSON / JSONL 格式的导出或对话文件 |
+| Cline | 基础支持 | 解析 JSON / JSONL 格式的对话文件 |
 
 ## 配置
 
@@ -79,6 +79,11 @@ cp config.example.toml config.toml
 然后编辑 `config.toml`，配置需要监控的 Agent 路径和摘要模型。
 
 ```toml
+[agents.codex]
+enabled = true
+type = "codex"
+paths = ["~/.codex/sessions/", "~/.codex/archived_sessions/"]
+
 [agents.claude]
 enabled = true
 type = "claude"
@@ -87,17 +92,12 @@ paths = ["~/.claude/projects/"]
 [agents.cursor]
 enabled = false
 type = "cursor"
-paths = ["~/.cursor/workspaceStorage/"]
+paths = ["~/.cursor/projects/", "~/.cursor/workspaceStorage/"]
 
 [agents.cline]
 enabled = false
 type = "cline"
 paths = ["~/.cline/conversations/"]
-
-[agents.codex]
-enabled = true
-type = "codex"
-paths = ["~/.codex/sessions/", "~/.codex/archived_sessions/"]
 
 [[summarizer.providers]]
 name = "deepseek"

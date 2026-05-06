@@ -13,7 +13,7 @@ AGENT_KNOWN_PATHS: dict[str, list[Path]] = {
         Path.home() / ".claude" / "projects",
     ],
     "cursor": [
-        Path.home() / ".cursor",
+        Path.home() / ".cursor" / "projects",
         Path.home() / ".cursor" / "workspaceStorage",
     ],
     "cline": [

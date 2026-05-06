@@ -120,15 +120,15 @@ def load_config(config_path: Path | None = None) -> AppConfig:
 def _default_config() -> AppConfig:
     return AppConfig(
         agents={
-            "claude": AgentConfig(
-                name="claude",
-                type="claude",
-                paths=["~/.claude/projects/"],
-            ),
             "codex": AgentConfig(
                 name="codex",
                 type="codex",
                 paths=["~/.codex/sessions/", "~/.codex/archived_sessions/"],
+            ),
+            "claude": AgentConfig(
+                name="claude",
+                type="claude",
+                paths=["~/.claude/projects/"],
             ),
         },
         providers=[],
