@@ -60,13 +60,13 @@ def detect_agents() -> list[AgentDetectionResult]:
     results: list[AgentDetectionResult] = []
     for agent_type in AgentType:
         search_paths = AGENT_KNOWN_PATHS.get(agent_type.value, [])
-        detected = any(p.exists() for p in search_paths)
+        installed = any(p.exists() for p in search_paths)
         base_path = _find_agent_base_path(agent_type)
-        conv_count = _count_conversations(agent_type, search_paths) if detected else 0
+        conv_count = _count_conversations(agent_type, search_paths) if installed else 0
         results.append(
             AgentDetectionResult(
                 name=agent_type.value,
-                detected=detected,
+                detected=installed,
                 path=base_path,
                 conversation_count=conv_count,
             )

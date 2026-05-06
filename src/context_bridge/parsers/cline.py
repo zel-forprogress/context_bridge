@@ -15,7 +15,22 @@ from context_bridge.parsers.base import BaseParser
 
 class ClineParser(BaseParser):
     def can_parse(self, file_path: Path) -> bool:
-        return "cline" in str(file_path).lower() and file_path.suffix in (".json", ".jsonl")
+        if file_path.suffix not in (".json", ".jsonl"):
+            return False
+        if "cline" not in str(file_path).lower():
+            return False
+        # 排除非对话的状态文件
+        if file_path.name in ("globalState.json", "workspaceState.json"):
+            return False
+        try:
+            data = json.loads(file_path.read_text(encoding="utf-8"))
+            entries = data if isinstance(data, list) else data.get("messages", [])
+            if not entries:
+                return False
+            # 检查是否包含 role 字段（对话格式）
+            return isinstance(entries[0], dict) and "role" in entries[0]
+        except (OSError, json.JSONDecodeError, PermissionError, IndexError):
+            return False
 
     def parse(self, file_path: Path) -> Conversation | None:
         messages: list[Message] = []
