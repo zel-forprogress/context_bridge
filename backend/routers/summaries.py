@@ -20,9 +20,7 @@ from schemas import ConversationDetail, MessageOut, ResumePromptOut, SummaryOut
 
 router = APIRouter()
 
-# 延迟初始化，首次请求时加载
-_config = None
-_summarizer = None
+CONFIG_PATH = Path(__file__).resolve().parent.parent.parent / "config.toml"
 _session_mgr = None
 
 
@@ -34,17 +32,9 @@ def _get_session_mgr():
 
 
 def _get_summarizer():
-    global _summarizer, _config
-    if _summarizer is None:
-        # 从项目根目录加载 config.toml
-        project_root = Path(__file__).resolve().parent.parent.parent
-        config_path = project_root / "config.toml"
-        _config = load_config(config_path)
-        _summarizer = Summarizer(
-            providers=_config.providers,
-            local_config=_config.local,
-        )
-    return _summarizer
+    """每次调用都从 config.toml 读取最新配置"""
+    cfg = load_config(CONFIG_PATH)
+    return Summarizer(providers=cfg.providers, local_config=cfg.local)
 
 
 def _find_conversation_file(agent_name: str, session_id: str) -> Path | None:

@@ -63,6 +63,9 @@ export const api = {
 
   getConfig: () => request<any>('/config'),
 
+  getProviderKey: (name: string) =>
+    request<{ api_key: string }>(`/config/provider-key/${encodeURIComponent(name)}`),
+
   updateConfig: (config: any) =>
     request<any>('/config', {
       method: 'PUT',

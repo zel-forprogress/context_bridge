@@ -36,15 +36,42 @@ export default function SettingsPage() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
+  const [visibleKeys, setVisibleKeys] = useState<Record<number, boolean>>({})
+  const [realKeys, setRealKeys] = useState<Record<number, string>>({})
 
   const loadConfig = async () => {
     try {
       const data = await api.getConfig()
+      // 保留掩码 key 的显示，后端会在保存时自动保留未修改的真实 key
       setConfig(data)
+      setVisibleKeys({})
+      setRealKeys({})
       setLoading(false)
     } catch {
       setMessage({ type: 'error', text: t('settings.loadError') })
       setLoading(false)
+    }
+  }
+
+  const toggleKeyVisibility = async (index: number) => {
+    const isVisible = visibleKeys[index]
+    if (isVisible) {
+      // 隐藏：恢复为空
+      setVisibleKeys((prev) => ({ ...prev, [index]: false }))
+    } else {
+      // 显示：如果还没获取过真实 key，从后端获取
+      if (!realKeys[index] && config) {
+        try {
+          const provider = config.providers[index]
+          const data = await api.getProviderKey(provider.name)
+          setRealKeys((prev) => ({ ...prev, [index]: data.api_key }))
+          // 同时更新 config 中的值，让用户可以看到
+          updateProvider(index, 'api_key', data.api_key)
+        } catch {
+          // 获取失败，忽略
+        }
+      }
+      setVisibleKeys((prev) => ({ ...prev, [index]: true }))
     }
   }
 
@@ -60,8 +87,13 @@ export default function SettingsPage() {
     try {
       await api.updateConfig(config)
       setMessage({ type: 'success', text: t('settings.saveSuccess') })
-      // 重新加载配置以获取掩码后的 key
-      await loadConfig()
+      // 更新 has_key 状态（不重新加载，避免清空用户刚输入的 key）
+      const updated = { ...config }
+      updated.providers = updated.providers.map((p) => ({
+        ...p,
+        has_key: !!p.api_key,
+      }))
+      setConfig(updated)
       // 通知其他组件配置已变更
       notifyConfigChanged()
     } catch {
@@ -172,13 +204,35 @@ export default function SettingsPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs text-gray-500 mb-1">{t('settings.apiKey')}</label>
-                  <input
-                    type="password"
-                    value={provider.api_key}
-                    onChange={(e) => updateProvider(index, 'api_key', e.target.value)}
-                    placeholder={provider.has_key ? '••••••••' : t('settings.apiKeyPlaceholder')}
-                    className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-blue-400"
-                  />
+                  <div className="relative">
+                    <input
+                      type={visibleKeys[index] ? 'text' : 'password'}
+                      value={provider.api_key}
+                      onChange={(e) => updateProvider(index, 'api_key', e.target.value)}
+                      placeholder={provider.has_key ? '' : t('settings.apiKeyPlaceholder')}
+                      className="w-full px-3 py-2 pr-10 text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-blue-400"
+                    />
+                    {provider.has_key && (
+                      <button
+                        type="button"
+                        onClick={() => toggleKeyVisibility(index)}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 p-0.5"
+                      >
+                        {visibleKeys[index] ? (
+                          // 眼睛打开（可见）
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                          </svg>
+                        ) : (
+                          // 眼睛关闭（隐藏）
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.879L21 21" />
+                          </svg>
+                        )}
+                      </button>
+                    )}
+                  </div>
                 </div>
                 <div>
                   <label className="block text-xs text-gray-500 mb-1">{t('settings.baseUrl')}</label>

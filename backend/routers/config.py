@@ -54,14 +54,14 @@ def _mask_key(key: str) -> str:
 
 @router.get("/config")
 def get_config():
-    """获取当前配置（API Key 掩码处理）"""
+    """获取当前配置"""
     cfg = load_config(CONFIG_PATH)
 
     providers = []
     for p in cfg.providers:
         providers.append({
             "name": p.name,
-            "api_key": _mask_key(p.api_key),
+            "api_key": p.api_key,
             "has_key": bool(p.api_key),
             "base_url": p.base_url,
             "model": p.model,
@@ -123,22 +123,40 @@ def _build_toml(cfg: AppConfig) -> str:
     return "\n".join(lines)
 
 
+@router.get("/config/provider-key/{provider_name}")
+def get_provider_key(provider_name: str):
+    """获取指定 provider 的真实 API Key（用于前端眼睛按钮）"""
+    cfg = load_config(CONFIG_PATH)
+    for p in cfg.providers:
+        if p.name == provider_name:
+            return {"api_key": p.api_key}
+    raise HTTPException(status_code=404, detail="Provider 未找到")
+
+
 @router.put("/config")
 def update_config(body: ConfigUpdate):
     """更新配置（写入 config.toml）"""
     cfg = load_config(CONFIG_PATH)
 
     if body.providers is not None:
-        cfg.providers = [
-            ProviderConfig(
-                name=p.name,
-                api_key=p.api_key,
-                base_url=p.base_url,
-                model=p.model,
-                enabled=p.enabled,
+        # 构建旧 provider 的 name -> api_key 映射，用于保留未修改的 key
+        old_keys = {p.name: p.api_key for p in cfg.providers}
+        new_providers = []
+        for p in body.providers:
+            api_key = p.api_key
+            # 如果前端发回的是掩码 key（含 ****）或空字符串，保留原值
+            if ("****" in api_key or not api_key) and p.name in old_keys and old_keys[p.name]:
+                api_key = old_keys[p.name]
+            new_providers.append(
+                ProviderConfig(
+                    name=p.name,
+                    api_key=api_key,
+                    base_url=p.base_url,
+                    model=p.model,
+                    enabled=p.enabled,
+                )
             )
-            for p in body.providers
-        ]
+        cfg.providers = new_providers
 
     if body.local is not None:
         cfg.local = LocalConfig(
