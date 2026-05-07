@@ -11,7 +11,7 @@ from pydantic import BaseModel
 # backend/ 目录加入 sys.path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent / "src"))
 
-from context_bridge.config import load_config, AppConfig, ProviderConfig, LocalConfig, MonitorConfig
+from context_bridge.config import load_config, AppConfig, ProviderConfig, LocalConfig
 from context_bridge.watcher_manager import watcher_manager
 
 router = APIRouter()
@@ -33,14 +33,9 @@ class LocalUpdate(BaseModel):
     model: str = "qwen2.5:7b"
 
 
-class MonitorUpdate(BaseModel):
-    interval: int = 5
-
-
 class ConfigUpdate(BaseModel):
     providers: list[ProviderUpdate] | None = None
     local: LocalUpdate | None = None
-    monitor: MonitorUpdate | None = None
 
 
 def _mask_key(key: str) -> str:
@@ -73,9 +68,6 @@ def get_config():
             "base_url": cfg.local.base_url,
             "model": cfg.local.model,
         },
-        "monitor": {
-            "interval": cfg.monitor.interval,
-        },
     }
 
 
@@ -107,11 +99,6 @@ def _build_toml(cfg: AppConfig) -> str:
     lines.append(f"enabled = {str(cfg.local.enabled).lower()}")
     lines.append(f'base_url = "{cfg.local.base_url}"')
     lines.append(f'model = "{cfg.local.model}"')
-    lines.append("")
-
-    # monitor
-    lines.append("[monitor]")
-    lines.append(f"interval = {cfg.monitor.interval}")
     lines.append("")
 
     return "\n".join(lines)
@@ -157,11 +144,6 @@ def update_config(body: ConfigUpdate):
             enabled=body.local.enabled,
             base_url=body.local.base_url,
             model=body.local.model,
-        )
-
-    if body.monitor is not None:
-        cfg.monitor = MonitorConfig(
-            interval=body.monitor.interval,
         )
 
     toml_content = _build_toml(cfg)

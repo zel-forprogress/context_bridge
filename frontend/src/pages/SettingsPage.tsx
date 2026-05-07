@@ -18,14 +18,9 @@ interface LocalConfig {
   model: string
 }
 
-interface MonitorConfig {
-  interval: number
-}
-
 interface Config {
   providers: Provider[]
   local: LocalConfig
-  monitor: MonitorConfig
 }
 
 export default function SettingsPage() {
@@ -296,30 +291,6 @@ export default function SettingsPage() {
                 onChange={(e) =>
                   setConfig({ ...config, local: { ...config.local, model: e.target.value } })
                 }
-                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-blue-400"
-              />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Monitor Settings */}
-      <section className="mb-8">
-        <h2 className="text-lg font-semibold text-gray-800 mb-4">{t('settings.monitor')}</h2>
-        <div className="bg-white rounded-xl border border-gray-200 p-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs text-gray-500 mb-1">{t('settings.interval')}</label>
-              <input
-                type="number"
-                value={config.monitor.interval}
-                onChange={(e) =>
-                  setConfig({
-                    ...config,
-                    monitor: { ...config.monitor, interval: Number(e.target.value) },
-                  })
-                }
-                min="1"
                 className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-blue-400"
               />
             </div>

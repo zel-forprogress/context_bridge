@@ -57,8 +57,3 @@ model = "MiMo-MiMo-7B-RL"
 enabled = true
 base_url = "http://localhost:11434"
 model = "qwen2.5:7b"
-
-# 监控行为
-[monitor]
-# 检查间隔（秒）
-interval = 5

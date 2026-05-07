@@ -90,8 +90,6 @@
     "baseUrl": "Base URL",
     "model": "Model",
     "localModel": "Local Model",
-    "monitor": "Monitor Settings",
-    "interval": "Check Interval (seconds)",
     "save": "Save Configuration",
     "saving": "Saving...",
     "saveSuccess": "Configuration saved",

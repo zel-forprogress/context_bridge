@@ -110,15 +110,10 @@ model = "deepseek-chat"
 enabled = true
 base_url = "http://localhost:11434"
 model = "qwen2.5:7b"
-
-[monitor]
-interval = 5
-context_threshold = 0.85
 ```
 
 说明：
 
-- `context_threshold` 是触发摘要提醒的上下文使用率阈值。
 - 云端 provider 会按配置顺序尝试，全部失败后再使用本地 Ollama。
 
 ## 开发运行

@@ -24,7 +24,6 @@ class WatcherManager:
         self._running = False
         self._lock = threading.Lock()
         self._started_at: datetime | None = None
-        self._processed: dict[str, datetime] = {}
 
     @property
     def running(self) -> bool:
@@ -102,15 +101,6 @@ class WatcherManager:
         agent_name: str,
         file_path: Path,
     ):
-        now = datetime.now()
-        key = str(file_path)
-
-        # 防止重复处理
-        if self._config and key in self._processed:
-            if (now - self._processed[key]).seconds < self._config.monitor.interval:
-                return
-        self._processed[key] = now
-
         # 解析对话
         if not self._config:
             return

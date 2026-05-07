@@ -42,16 +42,10 @@ class LocalConfig:
 
 
 @dataclass
-class MonitorConfig:
-    interval: int = 5
-
-
-@dataclass
 class AppConfig:
     agents: dict[str, AgentConfig] = field(default_factory=dict)
     providers: list[ProviderConfig] = field(default_factory=list)
     local: LocalConfig = field(default_factory=LocalConfig)
-    monitor: MonitorConfig = field(default_factory=MonitorConfig)
 
 
 def _expand(path_str: str) -> Path:
@@ -102,12 +96,6 @@ def load_config(config_path: Path | None = None) -> AppConfig:
         model=local_data.get("model", "qwen2.5:7b"),
     )
 
-    # 解析 monitor
-    mon_data = raw.get("monitor", {})
-    cfg.monitor = MonitorConfig(
-        interval=mon_data.get("interval", 5),
-    )
-
     return cfg
 
 
@@ -127,5 +115,4 @@ def _default_config() -> AppConfig:
         },
         providers=[],
         local=LocalConfig(enabled=True),
-        monitor=MonitorConfig(),
     )
