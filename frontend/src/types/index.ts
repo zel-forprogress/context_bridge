@@ -57,7 +57,6 @@ export interface MonitorStatus {
   started_at: string | null
   watched_agents: string[]
   context_threshold: number
-  auto_summarize: boolean
   summary_count: number
   last_summary_time: string | null
 }

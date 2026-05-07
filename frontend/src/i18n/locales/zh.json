@@ -37,9 +37,6 @@
     "agents": "Agent：",
     "none": "无",
     "threshold": "阈值：",
-    "autoSummary": "自动摘要：",
-    "on": "开启",
-    "off": "关闭",
     "summaries": "摘要数：",
     "last": "最近："
   },
@@ -97,7 +94,6 @@
     "monitor": "监控设置",
     "interval": "检查间隔（秒）",
     "contextThreshold": "上下文阈值",
-    "autoSummarize": "自动摘要",
     "save": "保存配置",
     "saving": "保存中...",
     "saveSuccess": "配置已保存",

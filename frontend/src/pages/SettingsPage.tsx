@@ -21,7 +21,6 @@ interface LocalConfig {
 interface MonitorConfig {
   interval: number
   context_threshold: number
-  auto_summarize: boolean
 }
 
 interface Config {
@@ -343,22 +342,6 @@ export default function SettingsPage() {
                 step="0.05"
                 className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-blue-400"
               />
-            </div>
-            <div className="flex items-center">
-              <label className="flex items-center gap-1.5 text-sm text-gray-600">
-                <input
-                  type="checkbox"
-                  checked={config.monitor.auto_summarize}
-                  onChange={(e) =>
-                    setConfig({
-                      ...config,
-                      monitor: { ...config.monitor, auto_summarize: e.target.checked },
-                    })
-                  }
-                  className="rounded border-gray-300"
-                />
-                {t('settings.autoSummarize')}
-              </label>
             </div>
           </div>
         </div>

@@ -23,7 +23,6 @@ def get_monitor_status():
     """获取当前监控状态"""
     config = watcher_manager.config
     threshold = config.monitor.context_threshold if config else 0.85
-    auto_summarize = config.monitor.auto_summarize if config else False
 
     # 从磁盘读取实际摘要数量和最新时间
     summaries = _session_mgr.list_recent(limit=9999)
@@ -39,7 +38,6 @@ def get_monitor_status():
         started_at=watcher_manager.started_at.isoformat() if watcher_manager.started_at else None,
         watched_agents=watcher_manager.watched_agents,
         context_threshold=threshold,
-        auto_summarize=auto_summarize,
         summary_count=summary_count,
         last_summary_time=last_summary_time.isoformat() if last_summary_time else None,
     )

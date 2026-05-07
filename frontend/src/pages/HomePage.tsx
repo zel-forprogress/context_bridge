@@ -70,12 +70,6 @@ function MonitorPanel() {
           <span className="ml-1 text-gray-900">{(status.context_threshold * 100).toFixed(0)}%</span>
         </div>
         <div>
-          <span className="text-gray-500">{t('monitor.autoSummary')}</span>
-          <span className={`ml-1 ${status.auto_summarize ? 'text-green-700' : 'text-gray-400'}`}>
-            {status.auto_summarize ? t('monitor.on') : t('monitor.off')}
-          </span>
-        </div>
-        <div>
           <span className="text-gray-500">{t('monitor.summaries')}</span>
           <span className="ml-1 text-gray-900">{status.summary_count}</span>
         </div>
