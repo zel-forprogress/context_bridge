@@ -1,3 +1,4 @@
+import { useRef } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 
@@ -5,8 +6,14 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const location = useLocation()
   const { t, i18n } = useTranslation()
 
+  // 记住最后访问的 agent 相关路径
+  const lastAgentPath = useRef('/')
+  if (location.pathname === '/' || location.pathname.startsWith('/agents') || location.pathname.startsWith('/conversations')) {
+    lastAgentPath.current = location.pathname
+  }
+
   const navItems = [
-    { path: '/', label: t('nav.agents'), icon: '🤖' },
+    { path: lastAgentPath.current, label: t('nav.agents'), icon: '🤖', match: '/' },
     { path: '/summaries', label: t('nav.summaries'), icon: '📋' },
     { path: '/settings', label: t('nav.settings'), icon: '⚙️' },
   ]
@@ -23,10 +30,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         </div>
         <nav className="flex-1 p-2">
           {navItems.map((item) => {
+            const matchPath = item.match || item.path
             const active =
-              item.path === '/'
+              matchPath === '/'
                 ? location.pathname === '/' || location.pathname.startsWith('/agents') || location.pathname.startsWith('/conversations')
-                : location.pathname.startsWith(item.path)
+                : location.pathname.startsWith(matchPath)
             return (
               <Link
                 key={item.path}
