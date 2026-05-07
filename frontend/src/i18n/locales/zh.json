@@ -36,7 +36,6 @@
     "stopped": "已停止",
     "agents": "Agent：",
     "none": "无",
-    "threshold": "阈值：",
     "summaries": "摘要数：",
     "last": "最近："
   },
@@ -93,7 +92,6 @@
     "localModel": "本地模型",
     "monitor": "监控设置",
     "interval": "检查间隔（秒）",
-    "contextThreshold": "上下文阈值",
     "save": "保存配置",
     "saving": "保存中...",
     "saveSuccess": "配置已保存",

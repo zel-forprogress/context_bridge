@@ -132,15 +132,7 @@ class WatcherManager:
         if not conversation:
             return
 
-        usage = conversation.usage_ratio
-        logger.info(f"[{agent_name}] {file_path.name} 上下文使用: {usage:.0%}")
-
-        # 检查是否超过阈值
-        if usage < self._config.monitor.context_threshold:
-            return
-
-        logger.warning(f"[{agent_name}] {file_path.name} 上下文使用率达到 {usage:.0%}，已超过阈值 {self._config.monitor.context_threshold:.0%}")
-        logger.info("请在界面中手动生成摘要")
+        logger.info(f"[{agent_name}] {file_path.name} 对话已更新")
 
 
 # 全局单例

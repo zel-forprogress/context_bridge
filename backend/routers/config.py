@@ -35,7 +35,6 @@ class LocalUpdate(BaseModel):
 
 class MonitorUpdate(BaseModel):
     interval: int = 5
-    context_threshold: float = 0.85
 
 
 class ConfigUpdate(BaseModel):
@@ -76,7 +75,6 @@ def get_config():
         },
         "monitor": {
             "interval": cfg.monitor.interval,
-            "context_threshold": cfg.monitor.context_threshold,
         },
     }
 
@@ -114,7 +112,6 @@ def _build_toml(cfg: AppConfig) -> str:
     # monitor
     lines.append("[monitor]")
     lines.append(f"interval = {cfg.monitor.interval}")
-    lines.append(f"context_threshold = {cfg.monitor.context_threshold}")
     lines.append("")
 
     return "\n".join(lines)
@@ -165,7 +162,6 @@ def update_config(body: ConfigUpdate):
     if body.monitor is not None:
         cfg.monitor = MonitorConfig(
             interval=body.monitor.interval,
-            context_threshold=body.monitor.context_threshold,
         )
 
     toml_content = _build_toml(cfg)

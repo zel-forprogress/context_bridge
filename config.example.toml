@@ -62,5 +62,3 @@ model = "qwen2.5:7b"
 [monitor]
 # 检查间隔（秒）
 interval = 5
-# 上下文使用率阈值，超过此值视为上下文即将用尽（0.0 - 1.0）
-context_threshold = 0.85

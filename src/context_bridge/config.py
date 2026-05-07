@@ -44,7 +44,6 @@ class LocalConfig:
 @dataclass
 class MonitorConfig:
     interval: int = 5
-    context_threshold: float = 0.85
 
 
 @dataclass
@@ -107,7 +106,6 @@ def load_config(config_path: Path | None = None) -> AppConfig:
     mon_data = raw.get("monitor", {})
     cfg.monitor = MonitorConfig(
         interval=mon_data.get("interval", 5),
-        context_threshold=mon_data.get("context_threshold", 0.85),
     )
 
     return cfg

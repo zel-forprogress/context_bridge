@@ -20,7 +20,6 @@ interface LocalConfig {
 
 interface MonitorConfig {
   interval: number
-  context_threshold: number
 }
 
 interface Config {
@@ -321,25 +320,6 @@ export default function SettingsPage() {
                   })
                 }
                 min="1"
-                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-blue-400"
-              />
-            </div>
-            <div>
-              <label className="block text-xs text-gray-500 mb-1">
-                {t('settings.contextThreshold')}
-              </label>
-              <input
-                type="number"
-                value={config.monitor.context_threshold}
-                onChange={(e) =>
-                  setConfig({
-                    ...config,
-                    monitor: { ...config.monitor, context_threshold: Number(e.target.value) },
-                  })
-                }
-                min="0"
-                max="1"
-                step="0.05"
                 className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-blue-400"
               />
             </div>
