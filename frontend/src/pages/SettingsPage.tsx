@@ -13,7 +13,7 @@ export default function SettingsPage() {
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
   const [visibleKeys, setVisibleKeys] = useState<Record<string, boolean>>({})
   const [realKeys, setRealKeys] = useState<Record<string, string>>({})
-  const messageTimer = useRef<ReturnType<typeof setTimeout>>()
+  const messageTimer = useRef<ReturnType<typeof setTimeout>>(undefined)
 
   const loadConfig = async () => {
     try {
@@ -102,14 +102,21 @@ export default function SettingsPage() {
     })
   }
 
-  const removeProvider = (index: number) => {
+  const removeProvider = async (index: number) => {
     if (!config) return
     const name = config.providers[index].name || t('settings.providerName')
     if (!window.confirm(t('settings.confirmRemove', { name }))) return
-    setConfig({
+    const updated = {
       ...config,
       providers: config.providers.filter((_, i) => i !== index),
-    })
+    }
+    setConfig(updated)
+    try {
+      await api.updateConfig(updated)
+      showMessage({ type: 'success', text: t('settings.saveSuccess') })
+    } catch {
+      showMessage({ type: 'error', text: t('settings.saveFailed') })
+    }
   }
 
   if (loading) {

@@ -51,6 +51,8 @@
     "generating": "Generating...",
     "generateSummary": "Generate Summary",
     "summaryFailed": "Summary failed",
+    "noProvider": "No summarizer configured. Please add a cloud or local LLM provider in Settings first.",
+    "providerUnavailable": "All summarizer models are unavailable. Please check your provider settings or ensure local Ollama is running.",
     "home": "Home"
   },
   "saved": {

@@ -28,11 +28,14 @@ function getPythonCommand() {
 }
 
 function getBackendPath() {
+  // In dev mode, backend is at ../../backend/
   const devPath = path.join(__dirname, '..', '..', 'backend', 'main.py')
-  if (fs.existsSync(devPath)) {
+  if (!app.isPackaged && fs.existsSync(devPath)) {
     return devPath
   }
-  return path.join(process.resourcesPath, 'backend', 'main.py')
+  // In production, extraFiles places backend alongside the exe
+  const appDir = path.dirname(process.execPath)
+  return path.join(appDir, 'backend', 'main.py')
 }
 
 function waitForServer(port, timeoutMs) {
@@ -151,6 +154,7 @@ async function createWindow() {
     }
   } else {
     mainWindow.loadFile(path.join(__dirname, '..', 'dist', 'index.html'))
+    mainWindow.webContents.openDevTools()
   }
 
   mainWindow.on('closed', () => {

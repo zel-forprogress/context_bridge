@@ -54,9 +54,21 @@ def summarize_conversation(agent_name: str, session_id: str):
         raise HTTPException(status_code=500, detail="对话文件解析失败")
 
     summarizer = _get_summarizer()
+    if not summarizer.has_providers:
+        summarizer.close()
+        raise HTTPException(
+            status_code=400,
+            detail="未配置摘要模型。请先在设置页面配置云端或本地 LLM 提供商。",
+        )
     try:
         summary = summarizer.summarize(conv)
     except Exception as e:
+        msg = str(e)
+        if "所有摘要提供者均失败" in msg or "所有" in msg and "失败" in msg:
+            raise HTTPException(
+                status_code=500,
+                detail="所有摘要模型均不可用。请检查设置中的提供商配置，或确认本地 Ollama 已启动。",
+            )
         raise HTTPException(status_code=500, detail=f"摘要生成失败: {e}")
     finally:
         summarizer.close()

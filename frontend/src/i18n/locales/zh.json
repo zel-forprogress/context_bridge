@@ -51,6 +51,8 @@
     "generating": "生成中...",
     "generateSummary": "生成摘要",
     "summaryFailed": "摘要生成失败",
+    "noProvider": "未配置摘要模型。请先在设置页面配置云端或本地 LLM 提供商。",
+    "providerUnavailable": "所有摘要模型均不可用。请检查设置中的提供商配置，或确认本地 Ollama 已启动。",
     "home": "首页"
   },
   "saved": {

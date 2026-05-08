@@ -106,6 +106,10 @@ class Summarizer:
         if local_config and local_config.enabled:
             self._local_provider = OllamaProvider(local_config)
 
+    @property
+    def has_providers(self) -> bool:
+        return bool(self._cloud_providers) or self._local_provider is not None
+
     def close(self):
         for p in self._cloud_providers:
             p.close()

@@ -30,7 +30,14 @@ export default function ConversationDetailPage() {
       const result = await api.summarize(agentName, sessionId)
       setSummary(result)
     } catch (e) {
-      setSummaryError(e instanceof Error ? e.message : t('detail.summaryFailed'))
+      const msg = e instanceof Error ? e.message : ''
+      if (msg.includes('未配置摘要模型') || msg.includes('No summarizer configured')) {
+        setSummaryError(t('detail.noProvider'))
+      } else if (msg.includes('所有摘要') || msg.includes('All summarizer') || msg.includes('摘要提供者均失败')) {
+        setSummaryError(t('detail.providerUnavailable'))
+      } else {
+        setSummaryError(t('detail.summaryFailed'))
+      }
     } finally {
       setSummarizing(false)
     }
