@@ -27,12 +27,21 @@
       {
         "from": "../backend",
         "to": "backend",
-        "filter": ["**/*", "!__pycache__", "!*.pyc", "!node_modules"]
+        "filter": [
+          "**/*",
+          "!__pycache__",
+          "!*.pyc",
+          "!node_modules"
+        ]
       },
       {
         "from": "../src",
         "to": "src",
-        "filter": ["**/*", "!__pycache__", "!*.pyc"]
+        "filter": [
+          "**/*",
+          "!__pycache__",
+          "!*.pyc"
+        ]
       },
       {
         "from": "../pyproject.toml",
@@ -66,10 +75,12 @@
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
     "react-i18next": "^17.0.6",
+    "react-markdown": "^10.1.0",
     "react-router-dom": "^7.14.2"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@tailwindcss/typography": "^0.5.19",
     "@types/node": "^24.12.2",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import ReactMarkdown from 'react-markdown'
 import type { SummaryOut } from '../types'
 import { api } from '../api/client'
 
@@ -41,7 +42,9 @@ export default function SummaryPanel({ summary }: { summary: SummaryOut }) {
         </button>
       </div>
 
-      <div className="text-sm text-gray-700 mb-4 leading-relaxed">{summary.summary}</div>
+      <div className="text-sm text-gray-700 mb-4 leading-relaxed prose prose-sm max-w-none">
+        <ReactMarkdown>{summary.summary}</ReactMarkdown>
+      </div>
 
       {summary.key_decisions.length > 0 && (
         <div className="mb-3">
