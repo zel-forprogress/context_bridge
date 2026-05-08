@@ -99,7 +99,6 @@ export default function SettingsPage() {
     setMessage(null)
 
     try {
-      console.log('保存配置:', JSON.stringify(config, null, 2))
       await api.updateConfig(config)
       showMessage({ type: 'success', text: t('settings.saveSuccess') })
       const updated = { ...config }
