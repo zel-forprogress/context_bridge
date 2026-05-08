@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 
 // 简单的事件系统，用于配置同步
 type ConfigSyncListener = () => void
@@ -16,15 +16,4 @@ export function useConfigSync(onConfigChanged: () => void) {
       listeners.delete(onConfigChanged)
     }
   }, [onConfigChanged])
-}
-
-// 用于强制刷新的 hook
-export function useForceRefresh() {
-  const [, setTick] = useState(0)
-
-  const refresh = () => {
-    setTick((prev) => prev + 1)
-  }
-
-  return refresh
 }
