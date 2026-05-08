@@ -18,7 +18,7 @@ Context Bridge 是一个 AI Agent 上下文管理工具。它会读取本机 AI 
 
 ## ✨ 特性
 
-- 🤖 **多 Agent 支持** - 自动检测 Claude Code、Cursor、Cline、Codex 等 AI 编程助手
+- 🤖 **多 Agent 支持** - 自动检测 Claude Code、Codex 等 AI 编程助手
 - 📊 **智能分析** - 估算对话 token 使用量，实时显示上下文使用率
 - 🎯 **结构化摘要** - 自动生成包含目标、决策、任务、文件的结构化摘要
 - 🌐 **多提供商支持** - 支持 OpenAI、Anthropic、DeepSeek 等云端 API，以及 Ollama 本地模型
@@ -93,7 +93,7 @@ ollama list
 
 ## 🎯 为什么需要它
 
-使用 Claude Code、Cursor 等 AI Agent 进行开发时，经常会遇到这些问题：
+使用 Claude Code、Codex 等 AI Agent 进行开发时，经常会遇到这些问题：
 
 - ❌ 对话上下文快满了，需要开新会话继续工作
 - ❌ 新会话缺少之前的项目背景、技术决策和待办事项
@@ -193,8 +193,6 @@ context-bridge/
 | Agent | 状态 | 说明 |
 | --- | --- | --- |
 | Claude Code | ✅ 已支持 | 解析 `~/.claude/projects/` 下的 JSONL 对话文件 |
-| Cursor | ✅ 已支持 | 解析 Cursor 的对话记录 |
-| Cline | ✅ 已支持 | 解析 Cline 的对话记录 |
 | Codex | ✅ 已支持 | 解析 `~/.codex/sessions/` 和 `~/.codex/archived_sessions/` 下的 rollout JSONL |
 
 ## 🏗️ 技术架构
