@@ -84,6 +84,8 @@ def summarize_conversation(agent_name: str, session_id: str):
         summary = summarizer.summarize(conv)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"摘要生成失败: {e}")
+    finally:
+        summarizer.close()
 
     session_mgr = _get_session_mgr()
     session_mgr.save(summary)

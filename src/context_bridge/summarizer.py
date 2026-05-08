@@ -47,6 +47,9 @@ class CloudProvider:
         self.model = config.model
         self._client = httpx.Client(timeout=120)
 
+    def close(self):
+        self._client.close()
+
     def chat(self, prompt: str) -> str:
         url = f"{self.base_url}/chat/completions"
         headers = {
@@ -102,6 +105,10 @@ class Summarizer:
 
         if local_config and local_config.enabled:
             self._local_provider = OllamaProvider(local_config)
+
+    def close(self):
+        for p in self._cloud_providers:
+            p.close()
 
     def summarize(self, conversation: Conversation) -> ContextSummary:
         conversation_text = conversation.to_text()
