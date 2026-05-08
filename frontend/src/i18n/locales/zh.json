@@ -81,14 +81,18 @@
     "apiKeyPlaceholder": "输入 API Key",
     "baseUrl": "Base URL",
     "model": "模型",
+    "apiType": "API 类型",
     "localModel": "本地模型",
     "save": "保存配置",
     "saving": "保存中...",
     "saveSuccess": "配置已保存",
     "saveError": "保存失败",
+    "saveFailed": "保存失败",
     "loadError": "加载配置失败",
     "retry": "重试",
-    "confirmRemove": "确定要删除提供商「{{name}}」吗？"
+    "confirmRemove": "确定要删除提供商「{{name}}」吗？",
+    "ollamaNotRunning": "未检测到 Ollama 或没有已安装的模型。",
+    "installOllama": "安装 Ollama"
   },
   "common": {
     "loading": "加载中..."

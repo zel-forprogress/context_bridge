@@ -24,6 +24,7 @@ class ProviderUpdate(BaseModel):
     base_url: str = ""
     model: str = ""
     enabled: bool = True
+    api_type: str = "openai"
 
 
 class LocalUpdate(BaseModel):
@@ -58,6 +59,7 @@ def get_config():
             "base_url": p.base_url,
             "model": p.model,
             "enabled": p.enabled,
+            "api_type": p.api_type,
         })
 
     return {
@@ -91,6 +93,7 @@ def _build_toml(cfg: AppConfig) -> str:
         lines.append(f'api_key = "{p.api_key}"')
         lines.append(f'base_url = "{p.base_url}"')
         lines.append(f'model = "{p.model}"')
+        lines.append(f'api_type = "{p.api_type}"')
         lines.append("")
 
     # local
@@ -111,6 +114,25 @@ def get_provider_key(provider_name: str):
         if p.name == provider_name:
             return {"api_key": p.api_key}
     raise HTTPException(status_code=404, detail="Provider 未找到")
+
+
+@router.get("/ollama/models")
+def list_ollama_models():
+    """获取 Ollama 已安装的对话模型列表（过滤掉嵌入模型）"""
+    try:
+        import requests
+        resp = requests.get("http://localhost:11434/api/tags", timeout=3)
+        if resp.status_code == 200:
+            models = resp.json().get("models", [])
+            # 过滤掉嵌入模型（embed, embedding 等关键词）
+            chat_models = [
+                m["name"] for m in models
+                if "embed" not in m["name"].lower()
+            ]
+            return {"models": chat_models, "available": True}
+    except Exception:
+        pass
+    return {"models": [], "available": False}
 
 
 @router.put("/config")
@@ -134,6 +156,7 @@ def update_config(body: ConfigUpdate):
                     base_url=p.base_url,
                     model=p.model,
                     enabled=p.enabled,
+                    api_type=p.api_type,
                 )
             )
         cfg.providers = new_providers

@@ -81,14 +81,18 @@
     "apiKeyPlaceholder": "Enter API Key",
     "baseUrl": "Base URL",
     "model": "Model",
+    "apiType": "API Type",
     "localModel": "Local Model",
     "save": "Save Configuration",
     "saving": "Saving...",
     "saveSuccess": "Configuration saved",
     "saveError": "Save failed",
+    "saveFailed": "Save failed",
     "loadError": "Failed to load configuration",
     "retry": "Retry",
-    "confirmRemove": "Remove provider \"{{name}}\"?"
+    "confirmRemove": "Remove provider \"{{name}}\"?",
+    "ollamaNotRunning": "Ollama not detected or no models installed.",
+    "installOllama": "Install Ollama"
   },
   "common": {
     "loading": "Loading..."

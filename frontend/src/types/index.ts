@@ -59,6 +59,7 @@ export interface Provider {
   base_url: string
   model: string
   enabled: boolean
+  api_type?: string  // openai / anthropic
 }
 
 export interface LocalConfig {

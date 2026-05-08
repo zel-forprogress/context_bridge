@@ -30,6 +30,7 @@ class ProviderConfig:
     base_url: str = ""
     model: str = ""
     enabled: bool = True
+    api_type: str = "openai"  # openai / anthropic
 
 
 @dataclass
@@ -83,6 +84,7 @@ def load_config(config_path: Path | None = None) -> AppConfig:
                 base_url=p.get("base_url", ""),
                 model=p.get("model", ""),
                 enabled=p.get("enabled", True),
+                api_type=p.get("api_type", "openai"),
             )
         )
 

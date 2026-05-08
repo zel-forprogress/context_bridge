@@ -45,12 +45,20 @@ class CloudProvider:
         self.api_key = config.api_key
         self.base_url = config.base_url.rstrip("/")
         self.model = config.model
+        self.api_type = config.api_type
         self._client = httpx.Client(timeout=120)
 
     def close(self):
         self._client.close()
 
     def chat(self, prompt: str) -> str:
+        if self.api_type == "anthropic":
+            return self._chat_anthropic(prompt)
+        else:
+            return self._chat_openai(prompt)
+
+    def _chat_openai(self, prompt: str) -> str:
+        """OpenAI 格式 API"""
         url = f"{self.base_url}/chat/completions"
         headers = {
             "Authorization": f"Bearer {self.api_key}",
@@ -70,11 +78,54 @@ class CloudProvider:
         data = resp.json()
         return data["choices"][0]["message"]["content"]
 
+    def _chat_anthropic(self, prompt: str) -> str:
+        """Anthropic 格式 API"""
+        url = f"{self.base_url}/v1/messages"
+        headers = {
+            "x-api-key": self.api_key,
+            "anthropic-version": "2023-06-01",
+            "Content-Type": "application/json",
+        }
+        payload = {
+            "model": self.model,
+            "max_tokens": 4096,
+            "messages": [{"role": "user", "content": prompt}],
+            "temperature": 0.3,
+        }
+
+        logger.info(f"调用 Anthropic API: {url}")
+        resp = self._client.post(url, json=payload, headers=headers)
+        logger.info(f"响应状态码: {resp.status_code}")
+
+        if resp.status_code == 429:
+            raise QuotaExhausted(f"{self.name}: 额度用尽 (429)")
+
+        if resp.status_code != 200:
+            error_detail = resp.text[:200] if resp.text else "无响应内容"
+            logger.error(f"Anthropic API 错误: {resp.status_code} - {error_detail}")
+            raise RuntimeError(f"API 调用失败 ({resp.status_code}): {error_detail}")
+
+        resp.raise_for_status()
+
+        data = resp.json()
+        return data["content"][0]["text"]
+
 
 class OllamaProvider:
     def __init__(self, config: LocalConfig):
         self.base_url = config.base_url.rstrip("/")
         self.model = config.model
+
+    def is_available(self) -> bool:
+        """检测 Ollama 是否运行且配置的模型已安装"""
+        try:
+            resp = requests.get(f"{self.base_url}/api/tags", timeout=3)
+            if resp.status_code != 200:
+                return False
+            models = [m["name"] for m in resp.json().get("models", [])]
+            return self.model in models
+        except Exception:
+            return False
 
     def chat(self, prompt: str) -> str:
         resp = requests.post(
@@ -104,7 +155,10 @@ class Summarizer:
                 self._cloud_providers.append(CloudProvider(p))
 
         if local_config and local_config.enabled:
-            self._local_provider = OllamaProvider(local_config)
+            provider = OllamaProvider(local_config)
+            # 只有在 Ollama 可用且模型已安装时才启用
+            if provider.is_available():
+                self._local_provider = provider
 
     @property
     def has_providers(self) -> bool:

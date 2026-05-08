@@ -13,6 +13,8 @@ export default function SettingsPage() {
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
   const [visibleKeys, setVisibleKeys] = useState<Record<string, boolean>>({})
   const [realKeys, setRealKeys] = useState<Record<string, string>>({})
+  const [ollamaModels, setOllamaModels] = useState<string[]>([])
+  const [ollamaAvailable, setOllamaAvailable] = useState(false)
   const messageTimer = useRef<ReturnType<typeof setTimeout>>(undefined)
 
   const loadConfig = async () => {
@@ -23,9 +25,22 @@ export default function SettingsPage() {
       setVisibleKeys({})
       setRealKeys({})
       setLoading(false)
+      // 加载 Ollama 模型列表
+      loadOllamaModels()
     } catch {
       setMessage({ type: 'error', text: t('settings.loadError') })
       setLoading(false)
+    }
+  }
+
+  const loadOllamaModels = async () => {
+    try {
+      const data = await api.getOllamaModels()
+      setOllamaModels(data.models || [])
+      setOllamaAvailable(data.available)
+    } catch {
+      setOllamaModels([])
+      setOllamaAvailable(false)
     }
   }
 
@@ -242,7 +257,18 @@ export default function SettingsPage() {
                     className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-blue-400"
                   />
                 </div>
-                <div className="md:col-span-2">
+                <div>
+                  <label className="block text-xs text-gray-500 mb-1">{t('settings.apiType')}</label>
+                  <select
+                    value={provider.api_type || 'openai'}
+                    onChange={(e) => updateProvider(index, 'api_type', e.target.value)}
+                    className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-blue-400"
+                  >
+                    <option value="openai">OpenAI</option>
+                    <option value="anthropic">Anthropic</option>
+                  </select>
+                </div>
+                <div>
                   <label className="block text-xs text-gray-500 mb-1">{t('settings.model')}</label>
                   <input
                     type="text"
@@ -290,14 +316,45 @@ export default function SettingsPage() {
             </div>
             <div>
               <label className="block text-xs text-gray-500 mb-1">{t('settings.model')}</label>
-              <input
-                type="text"
-                value={config.local.model}
-                onChange={(e) =>
-                  setConfig({ ...config, local: { ...config.local, model: e.target.value } })
-                }
-                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-blue-400"
-              />
+              {ollamaAvailable && ollamaModels.length > 0 ? (
+                <select
+                  value={config.local.model}
+                  onChange={(e) =>
+                    setConfig({ ...config, local: { ...config.local, model: e.target.value } })
+                  }
+                  className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-blue-400"
+                >
+                  {ollamaModels.map((model) => (
+                    <option key={model} value={model}>
+                      {model}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <div>
+                  <input
+                    type="text"
+                    value={config.local.model}
+                    onChange={(e) =>
+                      setConfig({ ...config, local: { ...config.local, model: e.target.value } })
+                    }
+                    className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-blue-400"
+                  />
+                  {!ollamaAvailable && (
+                    <p className="mt-2 text-xs text-amber-600">
+                      {t('settings.ollamaNotRunning')}
+                      <a
+                        href="https://ollama.com/download"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="ml-1 underline hover:text-amber-700"
+                      >
+                        {t('settings.installOllama')}
+                      </a>
+                    </p>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </div>

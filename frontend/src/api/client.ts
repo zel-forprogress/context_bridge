@@ -64,4 +64,7 @@ export const api = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(config),
     }),
+
+  getOllamaModels: () =>
+    request<{ models: string[]; available: boolean }>('/ollama/models'),
 }
