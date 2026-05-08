@@ -4,6 +4,7 @@ import type {
   ConversationDetail,
   SummaryOut,
   ResumePromptOut,
+  AppConfig,
 } from '../types'
 import i18n from '../i18n'
 
@@ -52,13 +53,13 @@ export const api = {
   getResumePrompt: (filename: string) =>
     request<ResumePromptOut>(`/summaries/${filename}`),
 
-  getConfig: () => request<any>('/config'),
+  getConfig: () => request<AppConfig>('/config'),
 
   getProviderKey: (name: string) =>
     request<{ api_key: string }>(`/config/provider-key/${encodeURIComponent(name)}`),
 
-  updateConfig: (config: any) =>
-    request<any>('/config', {
+  updateConfig: (config: AppConfig) =>
+    request<{ status: string }>('/config', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(config),

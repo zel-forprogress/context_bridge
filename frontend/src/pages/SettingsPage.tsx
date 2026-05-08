@@ -1,36 +1,19 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { api } from '../api/client'
 import { notifyConfigChanged } from '../hooks/useConfigSync'
-
-interface Provider {
-  name: string
-  api_key: string
-  has_key: boolean
-  base_url: string
-  model: string
-  enabled: boolean
-}
-
-interface LocalConfig {
-  enabled: boolean
-  base_url: string
-  model: string
-}
-
-interface Config {
-  providers: Provider[]
-  local: LocalConfig
-}
+import LoadingSpinner from '../components/LoadingSpinner'
+import type { AppConfig, Provider } from '../types'
 
 export default function SettingsPage() {
   const { t } = useTranslation()
-  const [config, setConfig] = useState<Config | null>(null)
+  const [config, setConfig] = useState<AppConfig | null>(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
   const [visibleKeys, setVisibleKeys] = useState<Record<string, boolean>>({})
   const [realKeys, setRealKeys] = useState<Record<string, string>>({})
+  const messageTimer = useRef<ReturnType<typeof setTimeout>>()
 
   const loadConfig = async () => {
     try {
@@ -71,6 +54,14 @@ export default function SettingsPage() {
     loadConfig()
   }, [])
 
+  const showMessage = (msg: { type: 'success' | 'error'; text: string }) => {
+    setMessage(msg)
+    clearTimeout(messageTimer.current)
+    if (msg.type === 'success') {
+      messageTimer.current = setTimeout(() => setMessage(null), 3000)
+    }
+  }
+
   const handleSave = async () => {
     if (!config) return
     setSaving(true)
@@ -78,18 +69,16 @@ export default function SettingsPage() {
 
     try {
       await api.updateConfig(config)
-      setMessage({ type: 'success', text: t('settings.saveSuccess') })
-      // 更新 has_key 状态（不重新加载，避免清空用户刚输入的 key）
+      showMessage({ type: 'success', text: t('settings.saveSuccess') })
       const updated = { ...config }
       updated.providers = updated.providers.map((p) => ({
         ...p,
         has_key: !!p.api_key,
       }))
       setConfig(updated)
-      // 通知其他组件配置已变更
       notifyConfigChanged()
     } catch {
-      setMessage({ type: 'error', text: t('settings.saveError') })
+      showMessage({ type: 'error', text: t('settings.saveError') })
     } finally {
       setSaving(false)
     }
@@ -115,6 +104,8 @@ export default function SettingsPage() {
 
   const removeProvider = (index: number) => {
     if (!config) return
+    const name = config.providers[index].name || t('settings.providerName')
+    if (!window.confirm(t('settings.confirmRemove', { name }))) return
     setConfig({
       ...config,
       providers: config.providers.filter((_, i) => i !== index),
@@ -124,7 +115,7 @@ export default function SettingsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-full">
-        <div className="text-gray-500">{t('common.loading')}</div>
+        <LoadingSpinner />
       </div>
     )
   }
@@ -132,7 +123,15 @@ export default function SettingsPage() {
   if (!config) {
     return (
       <div className="flex items-center justify-center h-full">
-        <div className="text-red-500">{t('settings.loadError')}</div>
+        <div className="text-center">
+          <div className="text-red-500 mb-3">{t('settings.loadError')}</div>
+          <button
+            onClick={() => { setLoading(true); loadConfig() }}
+            className="px-4 py-2 text-sm bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors"
+          >
+            {t('settings.retry')}
+          </button>
+        </div>
       </div>
     )
   }

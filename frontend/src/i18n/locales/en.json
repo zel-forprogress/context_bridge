@@ -84,7 +84,9 @@
     "saving": "Saving...",
     "saveSuccess": "Configuration saved",
     "saveError": "Save failed",
-    "loadError": "Failed to load configuration"
+    "loadError": "Failed to load configuration",
+    "retry": "Retry",
+    "confirmRemove": "Remove provider \"{{name}}\"?"
   },
   "common": {
     "loading": "Loading..."

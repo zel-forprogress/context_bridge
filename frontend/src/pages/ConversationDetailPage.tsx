@@ -6,6 +6,7 @@ import { api } from '../api/client'
 import MessageBubble from '../components/MessageBubble'
 import SummaryPanel from '../components/SummaryPanel'
 import LoadingSpinner from '../components/LoadingSpinner'
+import { formatTokens } from '../utils/format'
 import type { ConversationDetail, SummaryOut } from '../types'
 
 export default function ConversationDetailPage() {
@@ -65,9 +66,7 @@ export default function ConversationDetailPage() {
               <div className="flex items-center gap-4 text-sm text-gray-500">
                 <span>{t('detail.messages', { count: conversation.messages.length })}</span>
                 <span>
-                  {conversation.total_tokens >= 1000
-                    ? `${(conversation.total_tokens / 1000).toFixed(1)}k`
-                    : conversation.total_tokens}{' '}
+                  {formatTokens(conversation.total_tokens)}{' '}
                   {t('detail.tokens')}
                 </span>
                 <span>{(conversation.usage_ratio * 100).toFixed(1)}{t('detail.used')}</span>

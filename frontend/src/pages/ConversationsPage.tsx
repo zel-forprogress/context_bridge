@@ -3,12 +3,8 @@ import { useTranslation } from 'react-i18next'
 import { useApi } from '../hooks/useApi'
 import { api } from '../api/client'
 import LoadingSpinner from '../components/LoadingSpinner'
+import { formatTokens } from '../utils/format'
 import type { ConversationSummary } from '../types'
-
-function formatTokens(n: number): string {
-  if (n >= 1000) return `${(n / 1000).toFixed(1)}k`
-  return String(n)
-}
 
 function UsageBar({ ratio }: { ratio: number }) {
   const percent = Math.min(ratio * 100, 100)

@@ -51,3 +51,23 @@ export interface SummaryOut {
 export interface ResumePromptOut {
   prompt: string
 }
+
+export interface Provider {
+  name: string
+  api_key: string
+  has_key: boolean
+  base_url: string
+  model: string
+  enabled: boolean
+}
+
+export interface LocalConfig {
+  enabled: boolean
+  base_url: string
+  model: string
+}
+
+export interface AppConfig {
+  providers: Provider[]
+  local: LocalConfig
+}
