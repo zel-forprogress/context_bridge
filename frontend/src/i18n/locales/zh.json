@@ -29,17 +29,6 @@
     "filesModified": "已修改文件",
     "created": "创建时间："
   },
-  "monitor": {
-    "title": "上下文监控",
-    "start": "启动",
-    "stop": "停止",
-    "monitoring": "监控中",
-    "stopped": "已停止",
-    "agents": "Agent：",
-    "none": "无",
-    "summaries": "摘要数：",
-    "last": "最近："
-  },
   "home": {
     "detectedAgents": "已检测的 Agent",
     "detectedDesc": "自动检测本机安装的 AI Agent，点击可浏览对话记录。"

@@ -53,11 +53,3 @@ class SummaryOut(BaseModel):
 
 class ResumePromptOut(BaseModel):
     prompt: str
-
-
-class MonitorStatus(BaseModel):
-    running: bool
-    started_at: str | None
-    watched_agents: list[str]
-    summary_count: int
-    last_summary_time: str | None

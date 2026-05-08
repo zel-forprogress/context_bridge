@@ -12,7 +12,6 @@ from pydantic import BaseModel
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent / "src"))
 
 from context_bridge.config import load_config, AppConfig, ProviderConfig, LocalConfig
-from context_bridge.watcher_manager import watcher_manager
 
 router = APIRouter()
 
@@ -148,8 +147,5 @@ def update_config(body: ConfigUpdate):
 
     toml_content = _build_toml(cfg)
     CONFIG_PATH.write_text(toml_content, encoding="utf-8")
-
-    # 通知 watcher_manager 重新加载配置
-    watcher_manager.reload_config(CONFIG_PATH)
 
     return {"status": "ok"}

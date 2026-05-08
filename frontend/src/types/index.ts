@@ -51,11 +51,3 @@ export interface SummaryOut {
 export interface ResumePromptOut {
   prompt: string
 }
-
-export interface MonitorStatus {
-  running: boolean
-  started_at: string | null
-  watched_agents: string[]
-  summary_count: number
-  last_summary_time: string | null
-}

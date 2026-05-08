@@ -4,7 +4,6 @@ import type {
   ConversationDetail,
   SummaryOut,
   ResumePromptOut,
-  MonitorStatus,
 } from '../types'
 import i18n from '../i18n'
 
@@ -52,14 +51,6 @@ export const api = {
 
   getResumePrompt: (filename: string) =>
     request<ResumePromptOut>(`/summaries/${filename}`),
-
-  getMonitorStatus: () => request<MonitorStatus>('/monitor/status'),
-
-  startMonitor: () =>
-    request<{ status: string }>('/monitor/start', { method: 'POST' }),
-
-  stopMonitor: () =>
-    request<{ status: string }>('/monitor/stop', { method: 'POST' }),
 
   getConfig: () => request<any>('/config'),
 

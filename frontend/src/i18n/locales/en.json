@@ -29,17 +29,6 @@
     "filesModified": "Files Modified",
     "created": "Created:"
   },
-  "monitor": {
-    "title": "Context Monitor",
-    "start": "Start",
-    "stop": "Stop",
-    "monitoring": "Monitoring",
-    "stopped": "Stopped",
-    "agents": "Agents:",
-    "none": "None",
-    "summaries": "Summaries:",
-    "last": "Last:"
-  },
   "home": {
     "detectedAgents": "Detected Agents",
     "detectedDesc": "Auto-detected AI agents installed on your machine. Click an agent to browse conversations."
