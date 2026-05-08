@@ -13,34 +13,7 @@ from pathlib import Path
 from typing import Any
 
 from context_bridge.core import AgentType, Conversation, Message
-from context_bridge.parsers.base import BaseParser
-
-# Codex 注入的系统上下文标签（开标签）
-_SYSTEM_CTX_TAGS = (
-    "<permissions instructions>",
-    "<app-context>",
-    "<collaboration_mode>",
-    "<skills_instructions>",
-    "<plugins_instructions>",
-    "<environment_context>",
-)
-
-
-def _strip_system_context(text: str) -> str:
-    """剥离 Codex 注入的系统上下文块（如 <app-context>...</app-context>）"""
-    result: list[str] = []
-    skip = False
-    for line in text.splitlines():
-        stripped = line.strip()
-        if any(stripped.startswith(tag) for tag in _SYSTEM_CTX_TAGS):
-            skip = True
-            continue
-        if skip and stripped.startswith("</"):
-            skip = False
-            continue
-        if not skip:
-            result.append(line)
-    return "\n".join(result).strip()
+from context_bridge.parsers.base import BaseParser, strip_system_context
 
 
 class CodexParser(BaseParser):
@@ -111,7 +84,7 @@ class CodexParser(BaseParser):
                         continue
 
                     # 剥离 Codex 注入的系统上下文块
-                    content = _strip_system_context(content)
+                    content = strip_system_context(content)
                     if not content:
                         continue
 

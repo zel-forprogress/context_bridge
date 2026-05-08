@@ -12,8 +12,6 @@ else:
     try:
         import tomli as tomllib
     except ImportError:
-        import json
-
         tomllib = None
 
 

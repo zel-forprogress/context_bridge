@@ -14,9 +14,8 @@ from context_bridge.core import AgentType
 from context_bridge.parsers import get_parser
 from context_bridge.session import SessionManager
 from context_bridge.summarizer import Summarizer
-
-from context_bridge.detector import AGENT_KNOWN_PATHS
-from schemas import ConversationDetail, MessageOut, ResumePromptOut, SummaryOut
+from utils import find_conversation_file
+from schemas import ResumePromptOut, SummaryOut
 
 router = APIRouter()
 
@@ -37,35 +36,10 @@ def _get_summarizer():
     return Summarizer(providers=cfg.providers, local_config=cfg.local)
 
 
-def _find_conversation_file(agent_name: str, session_id: str) -> Path | None:
-    """在已知路径中查找指定对话文件"""
-    try:
-        agent_type = AgentType(agent_name)
-    except ValueError:
-        return None
-
-    parser = get_parser(agent_type)
-    search_paths = AGENT_KNOWN_PATHS.get(agent_name, [])
-
-    for base_path in search_paths:
-        if not base_path.exists():
-            continue
-        for file_path in base_path.rglob("*"):
-            if not file_path.is_file():
-                continue
-            if parser.can_parse(file_path):
-                if file_path.stem == session_id:
-                    return file_path
-                conv = parser.parse(file_path)
-                if conv and conv.session_id == session_id:
-                    return file_path
-    return None
-
-
 @router.post("/conversations/{agent_name}/{session_id}/summarize", response_model=SummaryOut)
 def summarize_conversation(agent_name: str, session_id: str):
     """为指定对话生成摘要"""
-    file_path = _find_conversation_file(agent_name, session_id)
+    file_path = find_conversation_file(agent_name, session_id)
     if file_path is None:
         raise HTTPException(status_code=404, detail="对话文件未找到")
 

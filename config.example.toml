@@ -13,16 +13,6 @@ type = "claude"
 # 对话文件目录，支持 ~ 展开
 paths = ["~/.claude/projects/"]
 
-[agents.cursor]
-enabled = false
-type = "cursor"
-paths = ["~/.cursor/projects/", "~/.cursor/workspaceStorage/"]
-
-[agents.cline]
-enabled = false
-type = "cline"
-paths = ["~/.cline/conversations/"]
-
 # 摘要提供者配置（按配置顺序依次尝试，全部失败后兜底到本地模型）
 [[summarizer.providers]]
 name = "deepseek"
