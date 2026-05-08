@@ -19,7 +19,28 @@ from schemas import ResumePromptOut, SummaryOut
 
 router = APIRouter()
 
-CONFIG_PATH = Path(__file__).resolve().parent.parent.parent / "config.toml"
+# 配置文件路径：开发模式用项目根目录，打包模式用用户主目录
+def _get_config_path() -> Path:
+    dev_path = Path(__file__).resolve().parent.parent.parent / "config.toml"
+    if dev_path.exists():
+        return dev_path
+    # 打包模式：使用用户主目录
+    user_config_dir = Path.home() / ".context-bridge"
+    user_config_dir.mkdir(parents=True, exist_ok=True)
+    user_config_path = user_config_dir / "config.toml"
+    # 如果配置文件不存在，创建默认配置
+    if not user_config_path.exists():
+        default_config = """# Context Bridge 配置文件
+
+[summarizer.local]
+enabled = false
+base_url = "http://localhost:11434"
+model = ""
+"""
+        user_config_path.write_text(default_config, encoding="utf-8")
+    return user_config_path
+
+CONFIG_PATH = _get_config_path()
 _session_mgr = None
 
 

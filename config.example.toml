@@ -46,4 +46,4 @@ model = "MiMo-MiMo-7B-RL"
 [summarizer.local]
 enabled = true
 base_url = "http://localhost:11434"
-model = "qwen2.5:7b"
+model = ""

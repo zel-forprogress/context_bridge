@@ -99,6 +99,7 @@ export default function SettingsPage() {
     setMessage(null)
 
     try {
+      console.log('保存配置:', JSON.stringify(config, null, 2))
       await api.updateConfig(config)
       showMessage({ type: 'success', text: t('settings.saveSuccess') })
       const updated = { ...config }
@@ -333,7 +334,7 @@ export default function SettingsPage() {
             <div>
               <label className="block text-xs text-gray-500 mb-1">{t('settings.model')}</label>
               <select
-                value={ollamaAvailable && ollamaModels.length > 0 ? config.local.model : ''}
+                value={config.local.model}
                 onChange={(e) =>
                   setConfig({ ...config, local: { ...config.local, model: e.target.value } })
                 }
@@ -341,11 +342,14 @@ export default function SettingsPage() {
                 className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-blue-400 disabled:bg-gray-50 disabled:text-gray-500"
               >
                 {ollamaAvailable && ollamaModels.length > 0 ? (
-                  ollamaModels.map((model) => (
-                    <option key={model} value={model}>
-                      {model}
-                    </option>
-                  ))
+                  <>
+                    <option value="">{t('settings.selectModel')}</option>
+                    {ollamaModels.map((model) => (
+                      <option key={model} value={model}>
+                        {model}
+                      </option>
+                    ))}
+                  </>
                 ) : (
                   <option value="">{t('settings.noModel')}</option>
                 )}

@@ -82,6 +82,7 @@
     "baseUrl": "Base URL",
     "model": "Model",
     "noModel": "None",
+    "selectModel": "Select a model",
     "apiType": "API Type",
     "localModel": "Local Model",
     "save": "Save Configuration",

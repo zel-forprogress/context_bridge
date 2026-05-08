@@ -82,6 +82,7 @@
     "baseUrl": "Base URL",
     "model": "模型",
     "noModel": "无",
+    "selectModel": "请选择模型",
     "apiType": "API 类型",
     "localModel": "本地模型",
     "save": "保存配置",
