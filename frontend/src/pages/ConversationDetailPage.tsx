@@ -14,6 +14,7 @@ export default function ConversationDetailPage() {
   const { data: conversation, loading, error } = useApi<ConversationDetail>(
     () => api.getConversation(agentName!, sessionId!),
     [agentName, sessionId],
+    !!agentName && !!sessionId,
   )
 
   const [summarizing, setSummarizing] = useState(false)
@@ -21,10 +22,11 @@ export default function ConversationDetailPage() {
   const [summaryError, setSummaryError] = useState<string | null>(null)
 
   const handleSummarize = async () => {
+    if (!agentName || !sessionId) return
     setSummarizing(true)
     setSummaryError(null)
     try {
-      const result = await api.summarize(agentName!, sessionId!)
+      const result = await api.summarize(agentName, sessionId)
       setSummary(result)
     } catch (e) {
       setSummaryError(e instanceof Error ? e.message : t('detail.summaryFailed'))

@@ -1,12 +1,16 @@
 import { useState, useEffect, useCallback } from 'react'
 import i18n from '../i18n'
 
-export function useApi<T>(fetcher: () => Promise<T>, deps: unknown[] = []) {
+export function useApi<T>(fetcher: () => Promise<T>, deps: unknown[] = [], enabled = true) {
   const [data, setData] = useState<T | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   const load = useCallback(async () => {
+    if (!enabled) {
+      setLoading(false)
+      return
+    }
     setLoading(true)
     setError(null)
     try {
@@ -17,7 +21,7 @@ export function useApi<T>(fetcher: () => Promise<T>, deps: unknown[] = []) {
     } finally {
       setLoading(false)
     }
-  }, deps)
+  }, [fetcher, enabled, ...deps])
 
   useEffect(() => {
     load()

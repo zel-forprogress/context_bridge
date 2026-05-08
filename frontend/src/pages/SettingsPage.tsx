@@ -29,8 +29,8 @@ export default function SettingsPage() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
-  const [visibleKeys, setVisibleKeys] = useState<Record<number, boolean>>({})
-  const [realKeys, setRealKeys] = useState<Record<number, string>>({})
+  const [visibleKeys, setVisibleKeys] = useState<Record<string, boolean>>({})
+  const [realKeys, setRealKeys] = useState<Record<string, string>>({})
 
   const loadConfig = async () => {
     try {
@@ -47,24 +47,23 @@ export default function SettingsPage() {
   }
 
   const toggleKeyVisibility = async (index: number) => {
-    const isVisible = visibleKeys[index]
+    if (!config) return
+    const provider = config.providers[index]
+    const key = provider.name
+    const isVisible = visibleKeys[key]
     if (isVisible) {
-      // 隐藏：恢复为空
-      setVisibleKeys((prev) => ({ ...prev, [index]: false }))
+      setVisibleKeys((prev) => ({ ...prev, [key]: false }))
     } else {
-      // 显示：如果还没获取过真实 key，从后端获取
-      if (!realKeys[index] && config) {
+      if (!realKeys[key]) {
         try {
-          const provider = config.providers[index]
           const data = await api.getProviderKey(provider.name)
-          setRealKeys((prev) => ({ ...prev, [index]: data.api_key }))
-          // 同时更新 config 中的值，让用户可以看到
+          setRealKeys((prev) => ({ ...prev, [key]: data.api_key }))
           updateProvider(index, 'api_key', data.api_key)
         } catch {
           // 获取失败，忽略
         }
       }
-      setVisibleKeys((prev) => ({ ...prev, [index]: true }))
+      setVisibleKeys((prev) => ({ ...prev, [key]: true }))
     }
   }
 
@@ -199,7 +198,7 @@ export default function SettingsPage() {
                   <label className="block text-xs text-gray-500 mb-1">{t('settings.apiKey')}</label>
                   <div className="relative">
                     <input
-                      type={visibleKeys[index] ? 'text' : 'password'}
+                      type={visibleKeys[provider.name] ? 'text' : 'password'}
                       value={provider.api_key}
                       onChange={(e) => updateProvider(index, 'api_key', e.target.value)}
                       placeholder={provider.has_key ? '' : t('settings.apiKeyPlaceholder')}
@@ -211,7 +210,7 @@ export default function SettingsPage() {
                         onClick={() => toggleKeyVisibility(index)}
                         className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 p-0.5"
                       >
-                        {visibleKeys[index] ? (
+                        {visibleKeys[provider.name] ? (
                           // 眼睛打开（可见）
                           <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />

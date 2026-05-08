@@ -47,6 +47,7 @@ export default function ConversationsPage() {
   const { data: conversations, loading, error } = useApi<ConversationSummary[]>(
     () => api.getConversations(agentName!),
     [agentName],
+    !!agentName,
   )
 
   return (
