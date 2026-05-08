@@ -81,6 +81,7 @@
     "apiKeyPlaceholder": "Enter API Key",
     "baseUrl": "Base URL",
     "model": "Model",
+    "noModel": "None",
     "apiType": "API Type",
     "localModel": "Local Model",
     "save": "Save Configuration",

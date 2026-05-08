@@ -13,8 +13,15 @@ export default function SettingsPage() {
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
   const [visibleKeys, setVisibleKeys] = useState<Record<string, boolean>>({})
   const [realKeys, setRealKeys] = useState<Record<string, string>>({})
-  const [ollamaModels, setOllamaModels] = useState<string[]>([])
-  const [ollamaAvailable, setOllamaAvailable] = useState(false)
+  const [ollamaModels, setOllamaModels] = useState<string[]>(() => {
+    // 从 localStorage 读取缓存
+    const cached = localStorage.getItem('ollama_models')
+    return cached ? JSON.parse(cached) : []
+  })
+  const [ollamaAvailable, setOllamaAvailable] = useState(() => {
+    const cached = localStorage.getItem('ollama_available')
+    return cached === 'true'
+  })
   const messageTimer = useRef<ReturnType<typeof setTimeout>>(undefined)
 
   const loadConfig = async () => {
@@ -25,8 +32,6 @@ export default function SettingsPage() {
       setVisibleKeys({})
       setRealKeys({})
       setLoading(false)
-      // 加载 Ollama 模型列表
-      loadOllamaModels()
     } catch {
       setMessage({ type: 'error', text: t('settings.loadError') })
       setLoading(false)
@@ -38,11 +43,22 @@ export default function SettingsPage() {
       const data = await api.getOllamaModels()
       setOllamaModels(data.models || [])
       setOllamaAvailable(data.available)
+      // 缓存到 localStorage
+      localStorage.setItem('ollama_models', JSON.stringify(data.models || []))
+      localStorage.setItem('ollama_available', String(data.available))
     } catch {
       setOllamaModels([])
       setOllamaAvailable(false)
+      localStorage.setItem('ollama_models', '[]')
+      localStorage.setItem('ollama_available', 'false')
     }
   }
+
+  useEffect(() => {
+    loadConfig()
+    // 每次进入页面时在后台刷新 Ollama 模型列表
+    loadOllamaModels()
+  }, [])
 
   const toggleKeyVisibility = async (index: number) => {
     if (!config) return
@@ -316,44 +332,36 @@ export default function SettingsPage() {
             </div>
             <div>
               <label className="block text-xs text-gray-500 mb-1">{t('settings.model')}</label>
-              {ollamaAvailable && ollamaModels.length > 0 ? (
-                <select
-                  value={config.local.model}
-                  onChange={(e) =>
-                    setConfig({ ...config, local: { ...config.local, model: e.target.value } })
-                  }
-                  className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-blue-400"
-                >
-                  {ollamaModels.map((model) => (
+              <select
+                value={ollamaAvailable && ollamaModels.length > 0 ? config.local.model : ''}
+                onChange={(e) =>
+                  setConfig({ ...config, local: { ...config.local, model: e.target.value } })
+                }
+                disabled={!ollamaAvailable || ollamaModels.length === 0}
+                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-blue-400 disabled:bg-gray-50 disabled:text-gray-500"
+              >
+                {ollamaAvailable && ollamaModels.length > 0 ? (
+                  ollamaModels.map((model) => (
                     <option key={model} value={model}>
                       {model}
                     </option>
-                  ))}
-                </select>
-              ) : (
-                <div>
-                  <input
-                    type="text"
-                    value={config.local.model}
-                    onChange={(e) =>
-                      setConfig({ ...config, local: { ...config.local, model: e.target.value } })
-                    }
-                    className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-blue-400"
-                  />
-                  {!ollamaAvailable && (
-                    <p className="mt-2 text-xs text-amber-600">
-                      {t('settings.ollamaNotRunning')}
-                      <a
-                        href="https://ollama.com/download"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="ml-1 underline hover:text-amber-700"
-                      >
-                        {t('settings.installOllama')}
-                      </a>
-                    </p>
-                  )}
-                </div>
+                  ))
+                ) : (
+                  <option value="">{t('settings.noModel')}</option>
+                )}
+              </select>
+              {!ollamaAvailable && (
+                <p className="mt-2 text-xs text-amber-600">
+                  {t('settings.ollamaNotRunning')}
+                  <a
+                    href="https://ollama.com/download"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="ml-1 underline hover:text-amber-700"
+                  >
+                    {t('settings.installOllama')}
+                  </a>
+                </p>
               )}
             </div>
           </div>

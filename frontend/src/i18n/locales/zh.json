@@ -81,6 +81,7 @@
     "apiKeyPlaceholder": "输入 API Key",
     "baseUrl": "Base URL",
     "model": "模型",
+    "noModel": "无",
     "apiType": "API 类型",
     "localModel": "本地模型",
     "save": "保存配置",

@@ -146,6 +146,12 @@ async function createWindow() {
   mainWindow.removeMenu()
 
   ipcMain.handle('get-backend-port', () => backendPort)
+    // 添加 F12 快捷键打开 DevTools
+  mainWindow.webContents.on('before-input-event', (event, input) => {
+    if (input.key === 'F12') {
+      mainWindow.webContents.toggleDevTools()
+    }
+  })
 
   if (!app.isPackaged) {
     mainWindow.loadURL(process.env.CONTEXT_BRIDGE_DEV_SERVER_URL || 'http://localhost:5173')
@@ -154,7 +160,6 @@ async function createWindow() {
     }
   } else {
     mainWindow.loadFile(path.join(__dirname, '..', 'dist', 'index.html'))
-    mainWindow.webContents.openDevTools()
   }
 
   mainWindow.on('closed', () => {
