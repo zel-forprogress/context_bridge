@@ -23,6 +23,7 @@
     "title": "摘要",
     "copyPrompt": "复制恢复提示",
     "copying": "复制中...",
+    "copySuccess": "已复制 ✓",
     "keyDecisions": "关键决策",
     "pendingTasks": "待办任务",
     "filesModified": "已修改文件",

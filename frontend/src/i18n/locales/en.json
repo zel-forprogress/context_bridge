@@ -23,6 +23,7 @@
     "title": "Summary",
     "copyPrompt": "Copy Resume Prompt",
     "copying": "Copying...",
+    "copySuccess": "Copied ✓",
     "keyDecisions": "Key Decisions",
     "pendingTasks": "Pending Tasks",
     "filesModified": "Files Modified",

@@ -6,16 +6,21 @@ import { api } from '../api/client'
 export default function SummaryPanel({ summary }: { summary: SummaryOut }) {
   const [prompt, setPrompt] = useState<string | null>(null)
   const [copying, setCopying] = useState(false)
+  const [copied, setCopied] = useState(false)
   const { t } = useTranslation()
 
   const handleCopyPrompt = async () => {
     setCopying(true)
     try {
-      if (!prompt) {
+      let text = prompt
+      if (!text) {
         const result = await api.getResumePrompt(summary.id)
-        setPrompt(result.prompt)
+        text = result.prompt
+        setPrompt(text)
       }
-      await navigator.clipboard.writeText(prompt || '')
+      await navigator.clipboard.writeText(text || '')
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
     } catch (e) {
       console.error('Failed to copy:', e)
     } finally {
@@ -32,7 +37,7 @@ export default function SummaryPanel({ summary }: { summary: SummaryOut }) {
           disabled={copying}
           className="text-xs px-3 py-1.5 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 transition-colors disabled:opacity-50"
         >
-          {copying ? t('summary.copying') : t('summary.copyPrompt')}
+          {copied ? t('summary.copySuccess') : copying ? t('summary.copying') : t('summary.copyPrompt')}
         </button>
       </div>
 
